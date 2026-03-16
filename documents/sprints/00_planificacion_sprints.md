@@ -36,14 +36,16 @@ El desarrollo de la plataforma se dividirá en iteraciones (Sprints), enfocadas 
 *   **Entregable:** Cada líder puede personalizar el color de su ministerio y mantener su agenda telefónica/directorio de líderes locales de las 8 iglesias.
 
 ## Sprint 4: El Motor del Calendario y Gestión de Eventos
-**Objetivo:** Construir la funcionalidad central de la plataforma: el calendario interactivo y la creación de eventos.
+**Objetivo:** Construir la funcionalidad central de la plataforma: el calendario interactivo y la creación de eventos, incluyendo manejos de conflictos y estados de publicación.
 *   **Tareas:**
     *   Integrar o construir un componente de calendario (vista mensual/semanal).
     *   Desarrollar el formulario de creación de Eventos (Título, Fecha, Lugar, Link).
-    *   Implementar la lógica de visibilidad: Campos para "Descripción Pública" y "Notas Privadas", y el interruptor para marcar el evento como Público o Privado.
-    *   Renderizar los eventos en el calendario utilizando el color del ministerio correspondiente.
+    *   Implementar el "Sistema de Advertencia de Conflictos" (revisión en tiempo real de eventos existentes en la fecha seleccionada y mostrar advertencia).
+    *   Añadir la lógica de "Estados" (Guardar como Borrador vs. Publicar). Crear una vista profesional para listar y gestionar los borradores de un líder.
+    *   Implementar la lógica de visibilidad: Campos para "Descripción Pública" y "Notas Privadas", y el interruptor para marcar el evento publicado como Público o Privado.
+    *   Renderizar los eventos publicados en el calendario utilizando el color del ministerio correspondiente.
     *   Crear el modal/cartilla flotante que muestra los detalles del evento al hacer clic.
-*   **Entregable:** Los líderes pueden crear, editar (soft delete) y visualizar sus eventos en el calendario interno del sistema.
+*   **Entregable:** Los líderes pueden crear eventos de manera informada (recibiendo alertas de choques de fecha), guardar eventos como borradores sin afectar el calendario global y, al publicarlos, visualizarlos correctamente en el sistema interno.
 
 ## Sprint 5: Landing Page y Visibilidad Pública
 **Objetivo:** Construir la cara pública del proyecto para que la congregación pueda ver las actividades.

@@ -51,18 +51,22 @@ La plataforma funcionará bajo un modelo basado en roles (RBAC).
     *   **Cargo/Rol Local** (lista desplegable con opciones predefinidas como: "Líder local", "Secretario", "Asistente", "Tesorero", o un campo de entrada libre "Custom").
 
 ### Eventos y Calendario
-*   **Creación de Eventos:** Los líderes distritales crean eventos proporcionando:
+*   **Creación de Eventos y Manejo de Conflictos:** Los líderes distritales crean eventos proporcionando:
     *   Título.
     *   Fecha(s).
     *   Lugar.
     *   Enlace opcional (ej. Google Maps).
+    *   **Sistema de Advertencia de Conflictos:** Al momento de que el usuario seleccione una fecha, el sistema verificará en tiempo real si existen eventos previos (del mismo u otros ministerios, incluido el "Distrito 3") agendados para ese día. Si es así, mostrará una alerta rápida listando los eventos conflictivos (y sus respectivos ministerios). El usuario, tras ser advertido, tiene la total libertad de ignorar la alerta y guardar su evento de todas formas (permitiendo múltiples eventos de diferentes ministerios el mismo día).
+*   **Estados del Evento (Borrador vs. Publicado):**
+    *   **Estado Borrador:** Ideal para sesiones de planificación (lluvia de ideas). Un evento en borrador es invisible para el resto del distrito (no aparece en el calendario general ni choca en el sistema de advertencias de conflictos). Tendrá una vista especial o un apartado propio dentro del panel del Líder (de manera profesional y cómoda) hasta que decida publicarlo.
+    *   **Estado Publicado:** El evento se vuelve activo, aparece en los calendarios (según su tipo de visibilidad) y es considerado por el sistema de conflictos.
 *   **Tipos y Visibilidad de Detalles:**
-    *   Un evento puede tener dos tipos de notas/detalles simultáneamente: **Descripción Pública** y **Notas Privadas**.
+    *   Un evento publicado puede tener dos tipos de notas/detalles simultáneamente: **Descripción Pública** y **Notas Privadas**.
     *   **Eventos Públicos:** Su "Descripción Pública" es visible para cualquier visitante en la Landing Page o plataforma.
     *   **Eventos Privados:** Son eventos internos de liderazgo (ej. Ayuno de líderes). Todo el evento y sus notas solo son visibles para los usuarios logueados (Líderes, Supervisor, Admin).
     *   _Opcional/Futuro:_ Capacidad de añadir notas exclusivamente visibles para el creador del evento.
 *   **Visualización en el Calendario:**
-    *   Los eventos se mostrarán en formato calendario, pintados con el color asignado a su respectivo ministerio.
+    *   Los eventos publicados se mostrarán en formato calendario, pintados con el color asignado a su respectivo ministerio.
     *   Al hacer clic en el evento (cuadradito), se desplegará una cartilla (div flotante/modal) con la información completa del evento.
 
 ---

@@ -17,15 +17,15 @@ El desarrollo de la plataforma se dividirá en iteraciones (Sprints), enfocadas 
 *   **Entregable:** Aplicación levantada, base de datos conectada, pantalla de login funcional que autentica al usuario administrador.
 
 ## Sprint 2: Gestión Administrativa y Catálogos
-**Objetivo:** Permitir al Administrador y Supervisor Distrital gestionar las entidades base del sistema.
+**Objetivo:** Permitir al Administrador gestionar las entidades y estructura base del sistema.
 *   **Tareas:**
-    *   Crear el panel de administración (Dashboard base).
+    *   Crear el panel de administración (Dashboard base, accesible exclusivamente para el Administrador).
     *   Implementar el CRUD para la tabla paramétrica de "Iglesias" (8 iglesias por defecto).
-    *   Implementar el CRUD para las "Categorías de Ministerios" (Especializados, Departamentos, etc.).
+    *   Implementar el CRUD para las "Categorías de Ministerios" (Especializados, Departamentos, Grupos Familiares, etc.).
     *   Implementar el CRUD de "Usuarios" (creación de credenciales para Supervisores y Líderes Distritales).
-    *   Implementar el CRUD de "Ministerios" (vinculado a una Categoría) y la asignación de Líderes (incluyendo la lógica de "Historial de Liderazgo" con fechas de inicio y fin).
-    *   Implementar lógica de "Soft Delete" para estas entidades (excepto hard delete para el Admin).
-*   **Entregable:** El Admin/Supervisor puede gestionar categorías, líderes, ministerios e iglesias, además de asignar líderes a ministerios generando el historial correspondiente.
+    *   Implementar el CRUD de "Ministerios" (vinculado a una Categoría) y la asignación/destitución de Líderes (incluyendo la lógica de "Historial de Liderazgo" con fechas de inicio y fin).
+    *   Implementar lógica de "Soft Delete" para estas entidades (Hard delete es exclusivo del Admin).
+*   **Entregable:** El Administrador puede gestionar independientemente las categorías, credenciales, ministerios e iglesias de todo el sistema, y asignar/remover líderes generando el historial correspondiente.
 
 ## Sprint 3: Directorio Local e Identidad Ministerial
 **Objetivo:** Darle herramientas al Líder Distrital para gestionar su equipo local y personalizar su ministerio.

@@ -12,11 +12,10 @@ La plataforma funcionará bajo un modelo basado en roles (RBAC).
 *   **Gestión de Cuentas:** Crea y asigna credenciales (usuario/contraseña) para Supervisores Distritales y Líderes Distritales.
 
 ### Supervisor Distrital
-*   Actúa como un Líder Distrital con privilegios elevados, teniendo a su cargo el ministerio principal denominado "Distrito 3".
-*   Tiene su propio historial de liderazgo similar al de un Líder Distrital.
-*   **Gestión de Ministerios y Líderes:** Puede crear y modificar ministerios. Puede crear credenciales para nuevos líderes distritales y asignarlos a un ministerio. Al realizar una reasignación, el líder saliente pasa al "historial de liderazgo" inhabilitando sus credenciales automáticamente (aunque es posible editar manualmente las fechas de inicio y fin).
-*   **Permisos de Eliminación Lógica:** Las eliminaciones realizadas por este rol son únicamente "soft deletes" (enviar a papelera / ocultar del sistema) para evitar pérdida de información histórica. Puede recuperar elementos en papelera.
-*   **Visibilidad:** Puede visualizar todos los eventos públicos y privados del distrito (ya que pertenece al liderazgo).
+*   Actúa como un Líder Distrital teniendo a su cargo el "ministerio" principal denominado "Distrito 3", lo que significa que gestiona los eventos generales a nivel de todo el distrito.
+*   Tiene su propio historial de liderazgo al igual que un Líder Distrital.
+*   **Gestión Limitada:** A diferencia del Administrador, el Supervisor **no** tiene permisos para crear, modificar o eliminar Ministerios, Categorías o Iglesias. Tampoco puede crear credenciales ni destituir o asignar Líderes Distritales. Todas esas tareas administrativas recaen exclusivamente en el Administrador.
+*   **Visibilidad Extendida:** Su principal privilegio (además de gestionar los eventos de "Distrito 3") es que puede visualizar absolutamente todos los eventos (públicos y privados) del distrito entero en el calendario, para supervisar las actividades.
 
 ### Líder Distrital
 *   Usuario a cargo de un ministerio específico (ej. Jóvenes, Niños, etc.).
@@ -30,18 +29,18 @@ La plataforma funcionará bajo un modelo basado en roles (RBAC).
 ## 2. Entidades Principales y Lógica de Negocio
 
 ### Categorías y Ministerios
-*   **Categorías de Ministerios (Paramétrica):** Los ministerios se agrupan en categorías mayores. El sistema proveerá categorías por defecto (ej. "Especializados", "Departamentos", "Grupos Familiares/Adultos") pero esta lista es dinámica (CRUD para Admin/Supervisor).
-*   **Creación de Ministerios:** Al crear un ministerio, el Admin o Supervisor debe registrar su nombre y asignarlo a una de las **Categorías**. También se puede seleccionar de manera opcional un logo oficial y un color inicial.
+*   **Categorías de Ministerios (Paramétrica):** Los ministerios se agrupan en categorías mayores. El sistema proveerá categorías por defecto (ej. "Especializados", "Departamentos", "Grupos Familiares/Adultos") pero esta lista es dinámica (CRUD exclusivo para el Administrador).
+*   **Creación de Ministerios:** Al crear un ministerio, el Administrador debe registrar su nombre y asignarlo a una de las **Categorías**. También se puede seleccionar de manera opcional un logo oficial y un color inicial.
 *   **Agrupación Visual:** En cualquier vista donde se listen los ministerios (como filtros del calendario o en la Landing Page), estos deben mostrarse estructurados y agrupados bajo el nombre de su categoría correspondiente usando subtítulos (encabezados de tamaño moderado).
 *   **Personalización:** Posteriormente, el Líder asignado al ministerio puede cambiar el color representativo (usado para identificar sus eventos en el calendario).
 *   **Historial de Liderazgo:**
     *   Un ministerio está asociado a un Líder Distrital activo.
-    *   Cuando el Admin/Supervisor asigna a un nuevo líder, el sistema registra automáticamente la fecha de fin del líder anterior y lo envía al historial, inhabilitando sus credenciales de acceso.
+    *   Cuando el Administrador asigna a un nuevo líder, el sistema registra automáticamente la fecha de fin del líder anterior y lo envía al historial, inhabilitando sus credenciales de acceso.
     *   La fecha de inicio y fin de estos periodos pueden ser editadas manualmente después de que el sistema las haya establecido.
 
 ### Iglesias Locales (Tabla Paramétrica)
 *   El sistema cuenta con un listado predefinido de las 8 iglesias que conforman el Distrito 3.
-*   Esta lista es paramétrica y puede ser modificada (CRUD) por el Admin o el Supervisor Distrital, alimentando listas desplegables (select/combobox) en toda la aplicación (ej. en el Directorio Local).
+*   Esta lista es paramétrica y puede ser modificada (CRUD) exclusivamente por el Administrador, alimentando listas desplegables (select/combobox) en toda la aplicación (ej. en el Directorio Local).
 
 ### Directorio de Líderes Locales
 *   Cada Líder Distrital puede crear y gestionar una lista de las personas que trabajan en su ministerio a nivel local (en cada una de las 8 iglesias).

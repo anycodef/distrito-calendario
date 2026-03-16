@@ -30,7 +30,7 @@ Aunque la estructura de BD evolucionará, los pilares centrales serán:
 *   **Iglesias (Paramétrica):** Catálogo de las 8 iglesias del distrito para su fácil selección.
 *   **Categorías de Ministerios (Paramétrica):** Agrupaciones lógicas para los ministerios (Ej. Especializados, Familia/Adultos, Departamentos). Permite organizar y filtrar los ministerios de manera jerárquica.
 *   **Ministerios:** Nombre, color representativo, logo asignado, y su relación con una Categoría de Ministerio.
-*   **Asignaciones / Historial de Liderazgo:** Relación entre el ministerio y el líder distrital. Se registrará fecha de inicio y fecha de fin (calculada automáticamente al hacer la transición, pero editable) para mantener un historial.
+*   **Asignaciones / Historial de Liderazgo:** Relación (Muchos a Muchos) entre ministerios y líderes distritales. **Un mismo líder puede tener a su cargo múltiples ministerios simultáneamente.** Se registrará fecha de inicio y fecha de fin (calculada automáticamente al hacer la transición, pero editable) para mantener un historial por cada ministerio.
 *   **Eventos de Calendario:**
     *   Título del evento, fecha(s), lugar, link opcional (ej. Google Maps).
     *   Ministerio al que pertenece (que define su color en el calendario).

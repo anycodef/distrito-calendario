@@ -18,10 +18,10 @@ La plataforma funcionará bajo un modelo basado en roles (RBAC).
 *   **Visibilidad Extendida:** Su principal privilegio (además de gestionar los eventos de "Distrito 3") es que puede visualizar absolutamente todos los eventos (públicos y privados) del distrito entero en el calendario, para supervisar las actividades.
 
 ### Líder Distrital
-*   Usuario a cargo de un ministerio específico (ej. Jóvenes, Niños, etc.).
-*   **Gestión de Eventos:** Tiene control (CRUD con soft delete) exclusivo sobre los eventos que él mismo crea para su ministerio.
-*   **Configuración del Ministerio:** Puede modificar detalles estéticos de su ministerio, como elegir el color representativo que se usará en el calendario.
-*   **Directorio Local:** Puede gestionar su propio directorio de líderes locales correspondientes a su ministerio en las 8 iglesias.
+*   Usuario a cargo de uno **o más ministerios simultáneamente** (ej. puede ser líder de Jóvenes y al mismo tiempo líder de Niños).
+*   **Gestión de Eventos:** Tiene control (CRUD con soft delete) exclusivo sobre los eventos que él mismo crea para sus ministerios asignados. Al crear un evento, seleccionará a qué ministerio (de los suyos) pertenece la actividad.
+*   **Configuración del Ministerio:** Puede modificar detalles estéticos de sus ministerios (como cambiar el color representativo de cada uno).
+*   **Directorio Local:** Puede gestionar directorios de líderes locales separados por cada uno de los ministerios que tiene a su cargo en las 8 iglesias.
 *   **Visibilidad:** Puede ver todos los eventos del calendario general, incluyendo los eventos marcados como "privados" (ya que tiene nivel de liderazgo).
 
 ---
@@ -34,9 +34,10 @@ La plataforma funcionará bajo un modelo basado en roles (RBAC).
 *   **Agrupación Visual:** En cualquier vista donde se listen los ministerios (como filtros del calendario o en la Landing Page), estos deben mostrarse estructurados y agrupados bajo el nombre de su categoría correspondiente usando subtítulos (encabezados de tamaño moderado).
 *   **Personalización:** Posteriormente, el Líder asignado al ministerio puede cambiar el color representativo (usado para identificar sus eventos en el calendario).
 *   **Historial de Liderazgo:**
-    *   Un ministerio está asociado a un Líder Distrital activo.
-    *   Cuando el Administrador asigna a un nuevo líder, el sistema registra automáticamente la fecha de fin del líder anterior y lo envía al historial, inhabilitando sus credenciales de acceso.
-    *   La fecha de inicio y fin de estos periodos pueden ser editadas manualmente después de que el sistema las haya establecido.
+    *   Un ministerio está asociado a un Líder Distrital activo, **y un Líder puede tener a su cargo múltiples ministerios.**
+    *   Cuando el Administrador asigna a un nuevo líder para un ministerio, el sistema registra automáticamente la fecha de fin del líder anterior para *ese ministerio en específico*, y lo envía a su respectivo historial.
+    *   **Inhabilitación de Credenciales:** Las credenciales del líder saliente solo se inhabilitarán si, al ser relevado, ya no le queda ningún otro ministerio activo asignado en la plataforma.
+    *   La fecha de inicio y fin de los periodos de liderazgo pueden ser editadas manualmente después de que el sistema las haya establecido.
 
 ### Iglesias Locales (Tabla Paramétrica)
 *   El sistema cuenta con un listado predefinido de las 8 iglesias que conforman el Distrito 3.

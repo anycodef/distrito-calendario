@@ -33,12 +33,13 @@ Actúa como la máxima autoridad de liderazgo y supervisión, pero a nivel de si
 ---
 
 ## 3. Líder Distrital
-Es el rol asignado a los encargados de cada ministerio específico (Ej. Jóvenes, Niños, Educación, Familia, etc.).
+Es el rol asignado a los encargados de los diferentes ministerios (Ej. Jóvenes, Niños, Educación, Familia, etc.). **Un mismo usuario Líder Distrital puede tener a su cargo uno o múltiples ministerios de forma simultánea.**
 
 **Permisos:**
-*   **Gestión de Eventos Propios:** Puede crear, modificar y archivar (soft delete) eventos exclusivos de su propio ministerio.
-*   **Identidad Ministerial:** Puede seleccionar y cambiar el "color" representativo de su ministerio, el cual pintará sus respectivos eventos en el calendario.
-*   **Directorio Local:** Tiene control total (CRUD) sobre su propio directorio de trabajo. Puede registrar a los líderes locales de las 8 iglesias añadiendo nombre, teléfono y cargo.
+*   **Gestión de Eventos Propios:** Puede crear, modificar y archivar (soft delete) eventos exclusivos para los ministerios que tiene a su cargo.
+*   **Identidad Ministerial:** Puede seleccionar y cambiar el "color" representativo individual de cada uno de sus ministerios asignados.
+*   **Directorio Local:** Tiene control total (CRUD) para gestionar directorios de trabajo separados por ministerio. Puede registrar a los líderes locales de las 8 iglesias para cada área.
+*   **Manejo de Multiministerios:** El dashboard y panel de control del Líder permitirá alternar de forma fluida entre sus ministerios asignados para gestionar eventos y equipos de manera organizada.
 *   **Visibilidad de Liderazgo:** Puede visualizar el calendario general, incluyendo los eventos "Privados" (notas internas de liderazgo) creados por los demás líderes y el Supervisor.
 
 **Restricciones:**

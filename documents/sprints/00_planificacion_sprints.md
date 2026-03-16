@@ -21,10 +21,11 @@ El desarrollo de la plataforma se dividirá en iteraciones (Sprints), enfocadas 
 *   **Tareas:**
     *   Crear el panel de administración (Dashboard base).
     *   Implementar el CRUD para la tabla paramétrica de "Iglesias" (8 iglesias por defecto).
+    *   Implementar el CRUD para las "Categorías de Ministerios" (Especializados, Departamentos, etc.).
     *   Implementar el CRUD de "Usuarios" (creación de credenciales para Supervisores y Líderes Distritales).
-    *   Implementar el CRUD de "Ministerios" y la asignación de Líderes (incluyendo la lógica de "Historial de Liderazgo" con fechas de inicio y fin).
+    *   Implementar el CRUD de "Ministerios" (vinculado a una Categoría) y la asignación de Líderes (incluyendo la lógica de "Historial de Liderazgo" con fechas de inicio y fin).
     *   Implementar lógica de "Soft Delete" para estas entidades (excepto hard delete para el Admin).
-*   **Entregable:** El Admin/Supervisor puede crear líderes, ministerios e iglesias, y asignar líderes a ministerios generando el historial correspondiente.
+*   **Entregable:** El Admin/Supervisor puede gestionar categorías, líderes, ministerios e iglesias, además de asignar líderes a ministerios generando el historial correspondiente.
 
 ## Sprint 3: Directorio Local e Identidad Ministerial
 **Objetivo:** Darle herramientas al Líder Distrital para gestionar su equipo local y personalizar su ministerio.
@@ -48,11 +49,11 @@ El desarrollo de la plataforma se dividirá en iteraciones (Sprints), enfocadas 
 **Objetivo:** Construir la cara pública del proyecto para que la congregación pueda ver las actividades.
 *   **Tareas:**
     *   Diseñar y maquetar la Landing Page (profesional, responsiva, aplicando los colores corporativos: blanco, rojo, azul, púrpura).
-    *   Mostrar el logo de la iglesia y, de forma dinámica, los logos de los ministerios activos.
+    *   Mostrar el logo de la iglesia y, de forma dinámica, los logos de los ministerios activos estructurados y agrupados por su Categoría correspondiente.
     *   Integrar una versión de "solo lectura" del calendario en la Landing Page que muestre únicamente los eventos marcados como "Públicos".
-    *   Implementar los filtros por "Ministerio" y la vista "General" en el calendario público.
+    *   Implementar los filtros por "Ministerio" permitiendo una búsqueda fácil y cómoda, agrupando las opciones visualmente bajo el título de su Categoría Paramétrica en la UI.
     *   Asegurar que el botón de "Login para Líderes" esté claramente posicionado.
-*   **Entregable:** Portal web completo donde cualquier hermano de la congregación puede consultar las actividades públicas del distrito, filtradas por ministerio.
+*   **Entregable:** Portal web completo donde la congregación puede consultar y filtrar actividades públicas, con los listados y menús de ministerios claramente organizados por sus categorías mayores.
 
 ## Sprint 6: Pulido, Testing y Despliegue (Release)
 **Objetivo:** Asegurar la calidad, el rendimiento y desplegar a producción.

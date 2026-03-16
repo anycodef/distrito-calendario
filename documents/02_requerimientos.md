@@ -29,8 +29,10 @@ La plataforma funcionará bajo un modelo basado en roles (RBAC).
 
 ## 2. Entidades Principales y Lógica de Negocio
 
-### Ministerios e Historial de Liderazgo
-*   **Creación:** El Admin o Supervisor crea un ministerio registrando como mínimo su nombre. También se puede seleccionar de manera opcional un logo oficial y un color inicial.
+### Categorías y Ministerios
+*   **Categorías de Ministerios (Paramétrica):** Los ministerios se agrupan en categorías mayores. El sistema proveerá categorías por defecto (ej. "Especializados", "Departamentos", "Grupos Familiares/Adultos") pero esta lista es dinámica (CRUD para Admin/Supervisor).
+*   **Creación de Ministerios:** Al crear un ministerio, el Admin o Supervisor debe registrar su nombre y asignarlo a una de las **Categorías**. También se puede seleccionar de manera opcional un logo oficial y un color inicial.
+*   **Agrupación Visual:** En cualquier vista donde se listen los ministerios (como filtros del calendario o en la Landing Page), estos deben mostrarse estructurados y agrupados bajo el nombre de su categoría correspondiente usando subtítulos (encabezados de tamaño moderado).
 *   **Personalización:** Posteriormente, el Líder asignado al ministerio puede cambiar el color representativo (usado para identificar sus eventos en el calendario).
 *   **Historial de Liderazgo:**
     *   Un ministerio está asociado a un Líder Distrital activo.
@@ -72,7 +74,7 @@ La plataforma contará con una página de entrada accesible para todo el públic
 
 *   **Identidad Visual:** Mostrará la bandera de la Iglesia, el logo oficial y, si es posible, una exhibición de los logos de los ministerios activos. El diseño debe ser profesional e intuitivo.
 *   **Calendario Público:** Los visitantes podrán visualizar las actividades distritales públicas (clasificación mensual, semanal, anual si el rendimiento lo permite).
-*   **Filtros:** Se podrá filtrar la vista del calendario general para ver únicamente los eventos de un ministerio en específico (o la vista "General", que agrupa todos los ministerios incluido el de "Distrito 3").
+*   **Filtros y Agrupaciones:** Se podrá filtrar la vista del calendario general para ver únicamente los eventos de un ministerio en específico. En el panel de filtros y presentación de la lista de ministerios, estos se verán ligeramente agrupados bajo el nombre de su categoría paramétrica (ej. *Especializados*: Jóvenes, Niños, Adolescentes; *Departamentos*: Oración, Música, Educación; etc.) en letras no tan pequeñas para facilitar la lectura y búsqueda.
 *   **Acceso al Sistema:** Contará con un botón o enlace (ej. "Login" o "Acceso Líderes") que redirigirá a la pantalla de autenticación para que el liderazgo ingrese al panel de gestión.
 
 ## 4. Requerimientos No Funcionales

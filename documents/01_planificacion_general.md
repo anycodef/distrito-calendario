@@ -28,7 +28,8 @@ La interfaz de usuario deberá transmitir profesionalidad e identidad:
 Aunque la estructura de BD evolucionará, los pilares centrales serán:
 *   **Usuarios (Líderes, Supervisor, Administrador):** Nombres, credenciales (usuario y contraseña encriptada), rol, etc.
 *   **Iglesias (Paramétrica):** Catálogo de las 8 iglesias del distrito para su fácil selección.
-*   **Ministerios:** Nombre, color representativo, logo asignado.
+*   **Categorías de Ministerios (Paramétrica):** Agrupaciones lógicas para los ministerios (Ej. Especializados, Familia/Adultos, Departamentos). Permite organizar y filtrar los ministerios de manera jerárquica.
+*   **Ministerios:** Nombre, color representativo, logo asignado, y su relación con una Categoría de Ministerio.
 *   **Asignaciones / Historial de Liderazgo:** Relación entre el ministerio y el líder distrital. Se registrará fecha de inicio y fecha de fin (calculada automáticamente al hacer la transición, pero editable) para mantener un historial.
 *   **Eventos de Calendario:**
     *   Título del evento, fecha(s), lugar, link opcional (ej. Google Maps).

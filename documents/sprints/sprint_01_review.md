@@ -56,7 +56,7 @@ npx prisma db push
 npx prisma generate
 
 # 3. Poblar la base de datos (Iglesias, Categorías y Súper Admin)
-npm run prisma db seed
+npx prisma db seed
 ```
 
 ### Paso 5: Levantar el Servidor

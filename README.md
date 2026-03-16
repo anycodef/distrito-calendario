@@ -47,7 +47,7 @@ npx prisma db push
 npx prisma generate
 
 # 3. Poblar la base de datos (Súper Administrador, 8 iglesias y categorías iniciales)
-npm run prisma db seed
+npx prisma db seed
 
 # 4. Iniciar servidor de desarrollo
 npm run dev

@@ -1,0 +1,159 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ------------------------------------------------------
+// ROLES Y USUARIOS
+// ------------------------------------------------------
+
+enum Role {
+  ADMIN
+  SUPERVISOR
+  LIDER
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  username  String   @unique
+  password  String   // bcrypt hash
+  role      Role     @default(LIDER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isActive  Boolean  @default(true) // Soft delete
+
+  // Relaciones
+  ministerios      Ministerio[]       @relation("UserMinisterios")
+  historialLideres HistorialLider[]
+  eventosCreados   Evento[]
+  directorioLocal  DirectorioLocal[]
+}
+
+// ------------------------------------------------------
+// ENTIDADES PARAMÉTRICAS
+// ------------------------------------------------------
+
+model Iglesia {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isActive  Boolean  @default(true)
+
+  // Relaciones
+  miembrosDirectorio DirectorioLocal[]
+}
+
+model CategoriaMinisterio {
+  id        String   @id @default(uuid())
+  name      String   @unique // Ej. Especializados, Departamentos
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isActive  Boolean  @default(true)
+
+  // Relaciones
+  ministerios Ministerio[]
+}
+
+// ------------------------------------------------------
+// MINISTERIOS E HISTORIAL
+// ------------------------------------------------------
+
+model Ministerio {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  color       String?  // Ej. #FF0000
+  logoUrl     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  isActive    Boolean  @default(true)
+
+  // FK Categoría
+  categoriaId String
+  categoria   CategoriaMinisterio @relation(fields: [categoriaId], references: [id])
+
+  // Relaciones N:M con Usuarios (Líderes activos)
+  lideresActivos User[] @relation("UserMinisterios")
+
+  // Relaciones
+  historialLideres HistorialLider[]
+  eventos          Evento[]
+  directorioLocal  DirectorioLocal[]
+}
+
+model HistorialLider {
+  id           String    @id @default(uuid())
+  startDate    DateTime
+  endDate      DateTime? // null significa que sigue activo, aunque lo manejaremos con las fechas
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  // FK
+  ministerioId String
+  ministerio   Ministerio @relation(fields: [ministerioId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ------------------------------------------------------
+// DIRECTORIO LOCAL
+// ------------------------------------------------------
+
+model DirectorioLocal {
+  id        String   @id @default(uuid())
+  name      String
+  phone     String?
+  roleLocal String   // Ej. Líder local, Secretario, Tesorero, Asistente, Custom
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isActive  Boolean  @default(true)
+
+  // FK
+  iglesiaId    String
+  iglesia      Iglesia    @relation(fields: [iglesiaId], references: [id])
+  ministerioId String
+  ministerio   Ministerio @relation(fields: [ministerioId], references: [id])
+  liderId      String     // Líder distrital que lo registró
+  lider        User       @relation(fields: [liderId], references: [id])
+}
+
+// ------------------------------------------------------
+// EVENTOS Y CALENDARIO
+// ------------------------------------------------------
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum EventVisibility {
+  PUBLIC   // Visible en Landing Page
+  PRIVATE  // Visible solo para Liderazgo
+}
+
+model Evento {
+  id               String          @id @default(uuid())
+  title            String
+  startDate        DateTime
+  endDate          DateTime
+  location         String?
+  mapLink          String?
+  publicDescription String?        @db.Text
+  privateNotes     String?         @db.Text
+  status           EventStatus     @default(PUBLISHED)
+  visibility       EventVisibility @default(PUBLIC)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  isActive         Boolean         @default(true) // Soft delete
+
+  // FK
+  ministerioId String
+  ministerio   Ministerio @relation(fields: [ministerioId], references: [id])
+  creatorId    String
+  creator      User       @relation(fields: [creatorId], references: [id])
+}

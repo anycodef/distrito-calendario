@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { CalendarRange, MapPin, AlignLeft, Lock, Save, Send, AlertTriangle, Eye, EyeOff, Loader2 } from "lucide-react";
+import { CalendarRange, MapPin, AlignLeft, Lock, Save, Send, AlertTriangle, Eye, EyeOff, Loader2, ArrowLeftRight, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { use } from "react";
 
@@ -114,6 +114,25 @@ export default function EditarEventoPage({ params }: { params: Promise<{ id: str
 
     return () => clearTimeout(timeoutId);
   }, [formData.startDate, formData.endDate, eventoId]);
+
+  const handleDelete = async () => {
+    if (!confirm("¿Estás seguro de cancelar y eliminar este evento permanentemente del calendario distrital?")) return;
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/lider/eventos/${eventoId}`, { method: "DELETE" });
+      if (res.ok) {
+        router.push("/dashboard/lider/eventos");
+        router.refresh();
+      } else {
+        alert("Error al eliminar el evento");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Error de red");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -387,34 +406,70 @@ export default function EditarEventoPage({ params }: { params: Promise<{ id: str
             </div>
           </div>
 
-          <div className="mt-8 flex flex-col-reverse sm:flex-row items-center justify-end gap-x-4 border-t border-gray-900/10 pt-6">
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="w-full sm:w-auto text-sm font-semibold leading-6 text-gray-900 px-4 py-2 hover:bg-gray-50 rounded-md"
-            >
-              Cancelar
-            </button>
-            <div className="flex w-full sm:w-auto gap-3">
-              {formData.status === "DRAFT" && (
+          <div className="mt-8 flex flex-col-reverse sm:flex-row items-center justify-between border-t border-gray-900/10 pt-6 gap-4">
+            <div className="w-full sm:w-auto flex flex-col sm:flex-row gap-3">
+              {formData.status === "PUBLISHED" && (
                 <button
                   type="button"
-                  onClick={(e) => handleSubmit(e, "DRAFT")}
+                  onClick={handleDelete}
                   disabled={saving}
-                  className="w-full sm:w-auto rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto rounded-md bg-white px-3 py-2 text-sm font-semibold text-red-600 shadow-sm ring-1 ring-inset ring-red-300 hover:bg-red-50 flex items-center justify-center gap-2 transition-colors"
                 >
-                  <Save className="w-4 h-4" /> Guardar Cambios
+                  <Trash2 className="w-4 h-4" /> Eliminar Evento
                 </button>
               )}
+            </div>
+
+            <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-3 justify-end items-center">
               <button
                 type="button"
-                onClick={(e) => handleSubmit(e, "PUBLISHED")}
-                disabled={saving}
-                className="w-full sm:w-auto rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 flex items-center justify-center gap-2"
+                onClick={() => router.back()}
+                className="w-full sm:w-auto text-sm font-semibold leading-6 text-gray-900 px-4 py-2 hover:bg-gray-50 rounded-md transition-colors"
               >
-                {saving ? <span className="animate-spin">⌛</span> : <Send className="w-4 h-4" />}
-                {formData.status === "DRAFT" ? "Publicar" : "Actualizar Evento"}
+                Cancelar
               </button>
+
+              {formData.status === "DRAFT" ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={(e) => handleSubmit(e, "DRAFT")}
+                    disabled={saving}
+                    className="w-full sm:w-auto rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 flex items-center justify-center gap-2 transition-colors"
+                  >
+                    <Save className="w-4 h-4" /> Guardar Cambios
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => handleSubmit(e, "PUBLISHED")}
+                    disabled={saving}
+                    className="w-full sm:w-auto rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 flex items-center justify-center gap-2 transition-colors"
+                  >
+                    {saving ? <span className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" /> : <Send className="w-4 h-4" />}
+                    Publicar
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    onClick={(e) => handleSubmit(e, "DRAFT")}
+                    disabled={saving}
+                    className="w-full sm:w-auto rounded-md bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-700 shadow-sm ring-1 ring-inset ring-amber-300 hover:bg-amber-100 flex items-center justify-center gap-2 transition-colors"
+                  >
+                    <ArrowLeftRight className="w-4 h-4" /> Devolver a Borrador
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => handleSubmit(e, "PUBLISHED")}
+                    disabled={saving}
+                    className="w-full sm:w-auto rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 flex items-center justify-center gap-2 transition-colors"
+                  >
+                    {saving ? <span className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" /> : <Save className="w-4 h-4" />}
+                    Actualizar Publicado
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </form>

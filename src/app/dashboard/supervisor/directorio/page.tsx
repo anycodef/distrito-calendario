@@ -20,7 +20,9 @@ export default function DirectorioLocalPage() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [iglesias, setIglesias] = useState<any[]>([]);
   const [ministerios, setMinisterios] = useState<any[]>([]);
+  const [lideresDistritales, setLideresDistritales] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<"PROPIO" | "DISTRITAL">("PROPIO");
   const [formError, setFormError] = useState("");
 
   const [editId, setEditId] = useState<string | null>(null);
@@ -32,18 +34,19 @@ export default function DirectorioLocalPage() {
   const [isActive, setIsActive] = useState(true);
 
   // Opciones predefinidas + Custom
-  const rolesOpciones = ["Líder local", "Secretario", "Asistente", "Tesorero"];
+  const rolesOpciones = ["Pastor", "Secretario Distrital", "Tesorero Distrital", "Asistente Distrital", "Vocal"];
   const [isCustomRole, setIsCustomRole] = useState(false);
 
   const fetchData = async () => {
     setLoading(true);
-    // Para simplificar y no hacer API public de iglesias, el middleware permite el acceso
-    // al endpoint de admin de iglesias sólo a Admin. Crearemos un endpoint libre de iglesias si falla.
-    // Usaremos llamadas estáticas o reusaremos si las iglesias están abiertas.
+    const [resDir, resLid] = await Promise.all([
+      fetch("/api/lider/directorio"),
+      fetch("/api/supervisor/lideres")
+    ]);
 
-    // NOTA: Como en middleware el /api/admin está protegido, necesitamos hacer endpoints para lider
-    // o incluir los catálogos en el payload del GET directorio.
-    const resDir = await fetch("/api/lider/directorio");
+    if (resLid.ok) {
+      setLideresDistritales(await resLid.json());
+    }
 
     // Obtenemos los ministerios del lider para el select
     const resMin = await fetch("/api/lider/ministerios");
@@ -153,16 +156,45 @@ export default function DirectorioLocalPage() {
 
   return (
     <div className="space-y-6">
-      <div className="border-b border-gray-200 pb-5">
-        <h3 className="text-xl font-semibold leading-6 text-gray-900">
-          Mi Directorio Local
-        </h3>
-        <p className="mt-1 text-sm text-gray-500">
-          Gestiona el equipo de trabajo a nivel de iglesias locales para tus ministerios asignados.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-gray-200 pb-5 gap-4">
+        <div>
+          <h3 className="text-2xl font-semibold leading-6 text-gray-900">
+            Directorio Distrital
+          </h3>
+          <p className="mt-2 text-sm text-gray-500">
+            Visualiza a todos los líderes de distrito y gestiona tu propio equipo o directiva.
+          </p>
+        </div>
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+      <div className="border-b border-gray-200 mb-6">
+        <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+          <button
+            onClick={() => setActiveTab("PROPIO")}
+            className={`${
+              activeTab === "PROPIO"
+                ? "border-blue-500 text-blue-600"
+                : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+            } whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium`}
+          >
+            Mi Directorio (Directiva / Equipo)
+          </button>
+          <button
+            onClick={() => setActiveTab("DISTRITAL")}
+            className={`${
+              activeTab === "DISTRITAL"
+                ? "border-blue-500 text-blue-600"
+                : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+            } whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium`}
+          >
+            Líderes Distritales ({lideresDistritales.length})
+          </button>
+        </nav>
+      </div>
+
+      {activeTab === "PROPIO" ? (
+      <>
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
         <form onSubmit={handleSubmit} className="space-y-4">
           {formError && (
              <div className="p-3 bg-red-50 text-red-700 text-sm rounded-md">{formError}</div>
@@ -306,6 +338,56 @@ export default function DirectorioLocalPage() {
            </div>
         )}
       </div>
+      </>
+      ) : (
+      <div className="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+        {loading ? (
+           <div className="p-8 text-center text-gray-500"><Loader2 className="animate-spin inline w-6 h-6"/></div>
+        ) : (
+           <div className="overflow-x-auto">
+             <table className="min-w-full divide-y divide-gray-300">
+               <thead className="bg-gray-50">
+                 <tr>
+                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Líder</th>
+                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Ministerios a Cargo</th>
+                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Iglesia Local</th>
+                 </tr>
+               </thead>
+               <tbody className="divide-y divide-gray-200 bg-white">
+                 {lideresDistritales.map(l => (
+                   <tr key={l.id}>
+                     <td className="px-6 py-4">
+                       <div className="font-medium text-gray-900">{l.name}</div>
+                       <div className="text-gray-500 text-xs">@{l.username}</div>
+                     </td>
+                     <td className="px-6 py-4 text-sm">
+                        {l.ministerios.length > 0 ? (
+                          <div className="flex flex-col gap-1">
+                            {l.ministerios.map((m: any, idx: number) => (
+                              <div key={idx} className="flex items-center gap-1 text-xs text-gray-700">
+                                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: m.color || '#ccc' }}/>
+                                {m.name}
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="text-gray-400 italic text-xs">Sin asignar</span>
+                        )}
+                     </td>
+                     <td className="px-6 py-4 text-sm text-gray-700">
+                        {l.iglesia ? l.iglesia.name : <span className="text-gray-400 italic text-xs">Sin iglesia</span>}
+                     </td>
+                   </tr>
+                 ))}
+                 {lideresDistritales.length === 0 && (
+                   <tr><td colSpan={3} className="p-6 text-center text-gray-500">No hay líderes distritales registrados.</td></tr>
+                 )}
+               </tbody>
+             </table>
+           </div>
+        )}
+      </div>
+      )}
     </div>
   );
 }

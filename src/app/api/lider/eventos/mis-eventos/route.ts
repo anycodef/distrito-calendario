@@ -16,12 +16,8 @@ export async function GET(request: NextRequest) {
 
     let whereClause: any = {
         isActive: true,
+        creatorId: (payload as any).id as string
     };
-
-    // Si es lider, solo ve los que él creó. Si es Supervisor, los ve todos para gestionar.
-    if (!(payload as any).roles.includes("SUPERVISOR")) {
-        whereClause.creatorId = (payload as any).id as string;
-    }
 
     if (status) {
         whereClause.status = status;

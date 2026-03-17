@@ -225,19 +225,21 @@ export default function MisEventosPage() {
                     </div>
                   </div>
 
-                  <div className={`flex sm:flex-col justify-end gap-2 sm:border-l sm:pl-4 pt-4 sm:pt-0 mt-4 sm:mt-0 border-t sm:border-t-0 ${isPast ? 'sm:border-gray-200 border-gray-200' : 'sm:border-gray-100 border-gray-100'}`} onClick={(e) => e.stopPropagation()}>
-                    {activeTab === 'DRAFT' && (
-                      <button onClick={() => setEventToPublish(ev)} className="flex-1 sm:flex-none inline-flex justify-center items-center gap-1 px-3 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 transition-colors">
-                        <Send className="w-4 h-4" /> Publicar
+                  {!isPast && (
+                    <div className={`flex sm:flex-col justify-end gap-2 sm:border-l sm:pl-4 pt-4 sm:pt-0 mt-4 sm:mt-0 border-t sm:border-t-0 ${isPast ? 'sm:border-gray-200 border-gray-200' : 'sm:border-gray-100 border-gray-100'}`} onClick={(e) => e.stopPropagation()}>
+                      {activeTab === 'DRAFT' && (
+                        <button onClick={() => setEventToPublish(ev)} className="flex-1 sm:flex-none inline-flex justify-center items-center gap-1 px-3 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 transition-colors">
+                          <Send className="w-4 h-4" /> Publicar
+                        </button>
+                      )}
+                      <Link href={`/dashboard/lider/eventos/${ev.id}/editar`} className="flex-1 sm:flex-none inline-flex justify-center items-center gap-1 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+                        <Edit2 className="w-4 h-4" /> Editar
+                      </Link>
+                      <button onClick={() => handleDelete(ev.id)} className="flex-1 sm:flex-none inline-flex justify-center items-center gap-1 px-3 py-2 text-sm font-medium text-red-600 bg-white border border-red-200 rounded-md hover:bg-red-50 transition-colors">
+                        <Trash2 className="w-4 h-4" /> Eliminar
                       </button>
-                    )}
-                    <Link href={`/dashboard/lider/eventos/${ev.id}/editar`} className="flex-1 sm:flex-none inline-flex justify-center items-center gap-1 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
-                      <Edit2 className="w-4 h-4" /> Editar
-                    </Link>
-                    <button onClick={() => handleDelete(ev.id)} className="flex-1 sm:flex-none inline-flex justify-center items-center gap-1 px-3 py-2 text-sm font-medium text-red-600 bg-white border border-red-200 rounded-md hover:bg-red-50 transition-colors">
-                      <Trash2 className="w-4 h-4" /> Eliminar
-                    </button>
-                  </div>
+                    </div>
+                  )}
                 </div>
               )})}
             </div>

@@ -85,5 +85,6 @@ La plataforma contará con una página de entrada accesible para todo el públic
 
 *   **Responsive Design / Mobile First:** Dado que los líderes accederán frecuentemente desde celulares, toda la plataforma (tanto pública como el panel de administración) debe adaptarse perfectamente a pantallas pequeñas.
 *   **Seguridad y Acceso:** La autenticación se manejará exclusivamente con credenciales internas (Usuario/Contraseña). Las contraseñas deben almacenarse en la base de datos de manera encriptada.
+    *   **Gestión de Contraseñas:** Los usuarios (Líderes y Supervisores) podrán modificar su propia contraseña desde su perfil en el dashboard. En caso de olvido o pérdida de credenciales, el **Administrador** tiene el privilegio de ingresar al perfil del usuario y sobrescribir su contraseña (estableciendo una nueva) **sin necesidad de conocer la contraseña antigua**.
 *   **Usabilidad:** Formularios y listas desplegables (como la selección de Iglesia) deben ser fáciles de usar. Las acciones destructivas (soft delete/hard delete) deben solicitar confirmación ("¿Estás seguro que deseas eliminar...?").
 *   **Rendimiento:** Las consultas al calendario (especialmente vistas mensuales/anuales) deben ser ligeras y optimizadas.

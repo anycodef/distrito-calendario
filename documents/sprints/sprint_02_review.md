@@ -12,6 +12,7 @@ El Sprint 2 ha sido completado y entregado. Este sprint se enfocó en dotar al S
     *   Creación de cuentas, definición de nombre de usuario y roles (LÍDER, SUPERVISOR, ADMIN).
     *   La encriptación de contraseñas de los usuarios creados se maneja con `bcrypt`.
     *   Capacidad para que el administrador inhabilité cuentas (soft-delete).
+    *   **Restablecimiento de Contraseñas:** El administrador puede editar un usuario existente y sobrescribir su contraseña. El backend (`PUT /api/admin/usuarios/[id]`) encripta la nueva contraseña sin necesidad de verificar o pedir la anterior, resolviendo casos de pérdida de credenciales por parte de los líderes.
 *   **Gestión de Ministerios e Historial Avanzado:**
     *   La vista `/dashboard/admin/ministerios` permite crear ministerios asociándoles un color, una Categoría paramétrica y opcionalmente un Líder.
     *   **Lógica de Historial (Business Rule):** Al reasignar o quitar un líder, el backend (`PUT /api/admin/ministerios/[id]`) ubica al líder saliente, cierra su historial añadiendo la fecha de fin (`endDate`), y verifica si le quedan otros ministerios a su cargo. Si no le quedan, su credencial se inhabilita automáticamente. Por el contrario, si se asigna un nuevo líder, se le abre un nuevo registro de historial y se reactiva su cuenta si estaba suspendida.

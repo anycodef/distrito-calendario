@@ -22,18 +22,19 @@ El desarrollo de la plataforma se dividirá en iteraciones (Sprints), enfocadas 
     *   Crear el panel de administración (Dashboard base, accesible exclusivamente para el Administrador).
     *   Implementar el CRUD para la tabla paramétrica de "Iglesias" (8 iglesias por defecto).
     *   Implementar el CRUD para las "Categorías de Ministerios" (Especializados, Departamentos, Grupos Familiares, etc.).
-    *   Implementar el CRUD de "Usuarios" (creación de credenciales para Supervisores y Líderes Distritales).
+    *   Implementar el CRUD de "Usuarios" (creación, edición y capacidad del Admin para **sobrescribir contraseñas perdidas** sin conocer la anterior).
     *   Implementar el CRUD de "Ministerios" (vinculado a una Categoría) y la asignación/destitución de Líderes (incluyendo la lógica de "Historial de Liderazgo" con fechas de inicio y fin).
     *   Implementar lógica de "Soft Delete" para estas entidades (Hard delete es exclusivo del Admin).
 *   **Entregable:** El Administrador puede gestionar independientemente las categorías, credenciales, ministerios e iglesias de todo el sistema, y asignar/remover líderes generando el historial correspondiente.
 
 ## Sprint 3: Directorio Local e Identidad Ministerial
-**Objetivo:** Darle herramientas al Líder Distrital para gestionar su equipo local y personalizar su ministerio.
+**Objetivo:** Darle herramientas al Líder Distrital para gestionar su equipo local, su propio perfil y personalizar sus ministerios asignados.
 *   **Tareas:**
-    *   Crear la vista específica para el Líder Distrital al iniciar sesión.
+    *   Crear la vista específica del Dashboard para el Líder Distrital (y Supervisor) al iniciar sesión, con selector de ministerios.
+    *   Implementar la sección "Mi Perfil" para que los líderes y supervisores puedan **modificar su propia contraseña**.
     *   Implementar la funcionalidad para que el Líder Distrital elija/cambie el color de su ministerio.
     *   Desarrollar el CRUD del "Directorio Local" (Añadir líder local, teléfono, selección de iglesia del catálogo, y asignación de cargo).
-*   **Entregable:** Cada líder puede personalizar el color de su ministerio y mantener su agenda telefónica/directorio de líderes locales de las 8 iglesias.
+*   **Entregable:** Cada líder puede cambiar su propia contraseña, personalizar el color de sus ministerios y mantener su agenda telefónica/directorio de líderes locales de las 8 iglesias.
 
 ## Sprint 4: El Motor del Calendario y Gestión de Eventos
 **Objetivo:** Construir la funcionalidad central de la plataforma: el calendario interactivo y la creación de eventos, incluyendo manejos de conflictos y estados de publicación.

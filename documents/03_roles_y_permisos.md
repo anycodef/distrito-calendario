@@ -9,7 +9,7 @@ Existen **únicamente tres roles** en todo el sistema. A continuación se detall
 Es el rol de máxima jerarquía. Se encarga de la configuración estructural de todo el sistema y la gestión del personal.
 
 **Permisos Exclusivos:**
-*   **Gestión de Cuentas:** Crear, editar credenciales, restablecer contraseñas y destituir a cualquier usuario (Supervisor o Líder Distrital).
+*   **Gestión de Cuentas:** Crear, editar credenciales, destituir a cualquier usuario (Supervisor o Líder Distrital) y **restablecer contraseñas** perdidas forzando una nueva sin conocer la contraseña anterior.
 *   **Gestión de Entidades Paramétricas:** Crear, modificar o eliminar Categorías de Ministerios (Ej. Especializados, Departamentos) y la lista de Iglesias Locales.
 *   **Gestión de Ministerios:** Crear y eliminar Ministerios Distritales y asignar/remover al líder distrital correspondiente. Esta acción genera de manera automática el registro en el "Historial de Liderazgo".
 *   **Borrado Permanente (Hard Delete):** Único rol con capacidad de purgar definitivamente registros de la base de datos y ejecutar limpiezas en cascada.
@@ -45,4 +45,4 @@ Es el rol asignado a los encargados de los diferentes ministerios (Ej. Jóvenes,
 **Restricciones:**
 *   **NO puede** editar ni eliminar eventos creados por otros ministerios o por el Supervisor.
 *   **NO puede** modificar el nombre oficial de su ministerio o cambiar la categoría a la que pertenece (esto es tarea del Administrador).
-*   **NO puede** gestionar credenciales, ni siquiera las suyas propias de manera autónoma (el restablecimiento de contraseñas lo maneja el Administrador).
+*   **NO puede** gestionar credenciales de otros líderes o supervisores. (Sin embargo, sí podrá editar y actualizar su **propia** contraseña personal a través de la sección "Mi Perfil" de su dashboard).

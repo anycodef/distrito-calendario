@@ -7,9 +7,13 @@ async function main() {
   console.log("Iniciando Seed de la base de datos...");
 
   // 1. Crear el Súper Administrador por defecto
-  // Generando contraseña segura según requerimientos obtenidos de variables de entorno
   const defaultAdminUsername = process.env.ADMIN_USERNAME || "admin";
-  const defaultAdminPassword = process.env.ADMIN_PASSWORD || "Sup3r@dm1n!C0mpl3x2024";
+  const defaultAdminPassword = process.env.ADMIN_PASSWORD;
+
+  if (!defaultAdminPassword) {
+    throw new Error("⚠️ ERROR: La variable de entorno ADMIN_PASSWORD no está definida. Es obligatoria para inicializar el administrador.");
+  }
+
   const adminPassword = await bcrypt.hash(defaultAdminPassword, 10);
 
   const admin = await prisma.user.upsert({

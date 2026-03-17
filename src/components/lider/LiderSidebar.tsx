@@ -5,6 +5,8 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   LogOut,
   LayoutDashboard,
+  CalendarDays,
+  CalendarRange,
   BookMarked,
   Contact,
   UserCircle
@@ -22,6 +24,8 @@ export default function LiderSidebar() {
 
   const navItems = [
     { name: "Inicio", href: "/dashboard/lider", icon: LayoutDashboard },
+    { name: "Calendario Distrital", href: "/dashboard/lider/calendario", icon: CalendarDays },
+    { name: "Mis Eventos", href: "/dashboard/lider/eventos", icon: CalendarRange },
     { name: "Mis Ministerios", href: "/dashboard/lider/ministerios", icon: BookMarked },
     { name: "Directorio Local", href: "/dashboard/lider/directorio", icon: Contact },
     { name: "Mi Perfil", href: "/dashboard/lider/perfil", icon: UserCircle },

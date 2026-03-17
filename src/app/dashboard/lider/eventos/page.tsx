@@ -14,6 +14,7 @@ export default function MisEventosPage() {
   const [filterType, setFilterType] = useState<"ALL" | "UPCOMING" | "PAST">("UPCOMING");
   const [selectedEvent, setSelectedEvent] = useState<any | null>(null);
   const [eventToPublish, setEventToPublish] = useState<any | null>(null);
+  const [eventToDelete, setEventToDelete] = useState<any | null>(null);
 
   const fetchEventos = async () => {
     setLoading(true);
@@ -34,19 +35,21 @@ export default function MisEventosPage() {
     fetchEventos();
   }, [activeTab]);
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("¿Estás seguro de que deseas eliminar este evento?")) return;
+  const handleDeleteConfirm = async () => {
+    if (!eventToDelete) return;
 
     try {
-      const res = await fetch(`/api/lider/eventos/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/lider/eventos/${eventToDelete.id}`, { method: "DELETE" });
       if (res.ok) {
-        setEventos(eventos.filter(ev => ev.id !== id));
+        setEventos(eventos.filter(ev => ev.id !== eventToDelete.id));
       } else {
         alert("Error al eliminar el evento");
       }
     } catch (error) {
       console.error(error);
       alert("Error de red");
+    } finally {
+      setEventToDelete(null);
     }
   };
 
@@ -235,7 +238,7 @@ export default function MisEventosPage() {
                       <Link href={`/dashboard/lider/eventos/${ev.id}/editar`} className="flex-1 sm:flex-none inline-flex justify-center items-center gap-1 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
                         <Edit2 className="w-4 h-4" /> Editar
                       </Link>
-                      <button onClick={() => handleDelete(ev.id)} className="flex-1 sm:flex-none inline-flex justify-center items-center gap-1 px-3 py-2 text-sm font-medium text-red-600 bg-white border border-red-200 rounded-md hover:bg-red-50 transition-colors">
+                      <button onClick={() => setEventToDelete(ev)} className="flex-1 sm:flex-none inline-flex justify-center items-center gap-1 px-3 py-2 text-sm font-medium text-red-600 bg-white border border-red-200 rounded-md hover:bg-red-50 transition-colors">
                         <Trash2 className="w-4 h-4" /> Eliminar
                       </button>
                     </div>
@@ -370,6 +373,41 @@ export default function MisEventosPage() {
                 className="px-4 py-2 bg-blue-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-blue-700 flex items-center gap-2"
               >
                 <Send className="w-4 h-4" /> Sí, Publicar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Confirmación de Eliminación */}
+      {eventToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setEventToDelete(null)}>
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="bg-red-50 border-b border-red-100 px-6 py-4 flex items-center gap-3">
+              <Trash2 className="h-6 w-6 text-red-500" />
+              <h3 className="text-lg font-bold text-red-900">Eliminar Evento</h3>
+            </div>
+            <div className="p-6 space-y-4">
+              <p className="text-sm text-gray-600">
+                Estás a punto de eliminar el evento <strong>{eventToDelete.title}</strong>.
+                Esta acción lo quitará del calendario y de tu lista de eventos.
+              </p>
+              <p className="text-sm text-gray-600">
+                ¿Deseas continuar?
+              </p>
+            </div>
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
+              <button
+                onClick={() => setEventToDelete(null)}
+                className="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleDeleteConfirm}
+                className="px-4 py-2 bg-red-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-red-700 flex items-center gap-2"
+              >
+                <Trash2 className="w-4 h-4" /> Sí, Eliminar
               </button>
             </div>
           </div>

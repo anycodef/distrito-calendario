@@ -17,6 +17,8 @@ export default function EditarEventoPage({ params }: { params: Promise<{ id: str
   const [checkingConflicts, setCheckingConflicts] = useState(false);
   const [conflictos, setConflictos] = useState<any[]>([]);
   const [showConflictsModal, setShowConflictsModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showDraftModal, setShowDraftModal] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -115,8 +117,7 @@ export default function EditarEventoPage({ params }: { params: Promise<{ id: str
     return () => clearTimeout(timeoutId);
   }, [formData.startDate, formData.endDate, eventoId]);
 
-  const handleDelete = async () => {
-    if (!confirm("¿Estás seguro de cancelar y eliminar este evento permanentemente del calendario distrital?")) return;
+  const handleDeleteConfirm = async () => {
     setSaving(true);
     try {
       const res = await fetch(`/api/lider/eventos/${eventoId}`, { method: "DELETE" });
@@ -131,8 +132,17 @@ export default function EditarEventoPage({ params }: { params: Promise<{ id: str
       alert("Error de red");
     } finally {
       setSaving(false);
+      setShowDeleteModal(false);
     }
   };
+
+  const handleDraftConfirm = async () => {
+    setShowDraftModal(false);
+    // Para simplificar, forzamos un evento sintético ya que handleSubmit requiere uno.
+    // Lo más limpio es extraer la logica de guardado, pero pasamos el e simulado.
+    const e = { preventDefault: () => {} } as React.FormEvent;
+    handleSubmit(e, "DRAFT");
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -411,7 +421,7 @@ export default function EditarEventoPage({ params }: { params: Promise<{ id: str
               {formData.status === "PUBLISHED" && (
                 <button
                   type="button"
-                  onClick={handleDelete}
+                  onClick={() => setShowDeleteModal(true)}
                   disabled={saving}
                   className="w-full sm:w-auto rounded-md bg-white px-3 py-2 text-sm font-semibold text-red-600 shadow-sm ring-1 ring-inset ring-red-300 hover:bg-red-50 flex items-center justify-center gap-2 transition-colors"
                 >
@@ -453,7 +463,7 @@ export default function EditarEventoPage({ params }: { params: Promise<{ id: str
                 <>
                   <button
                     type="button"
-                    onClick={(e) => handleSubmit(e, "DRAFT")}
+                    onClick={() => setShowDraftModal(true)}
                     disabled={saving}
                     className="w-full sm:w-auto rounded-md bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-700 shadow-sm ring-1 ring-inset ring-amber-300 hover:bg-amber-100 flex items-center justify-center gap-2 transition-colors"
                   >
@@ -493,6 +503,76 @@ export default function EditarEventoPage({ params }: { params: Promise<{ id: str
             </div>
             <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end">
               <button onClick={() => setShowConflictsModal(false)} className="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm">Cerrar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Confirmar Eliminación */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setShowDeleteModal(false)}>
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="bg-red-50 border-b border-red-100 px-6 py-4 flex items-center gap-3">
+              <Trash2 className="h-6 w-6 text-red-500" />
+              <h3 className="text-lg font-bold text-red-900">Cancelar Evento</h3>
+            </div>
+            <div className="p-6 space-y-4">
+              <p className="text-sm text-gray-600">
+                Estás a punto de eliminar permanentemente este evento del calendario distrital. Esta acción no se puede deshacer.
+              </p>
+              <p className="text-sm text-gray-600">
+                ¿Deseas continuar?
+              </p>
+            </div>
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Cerrar
+              </button>
+              <button
+                onClick={handleDeleteConfirm}
+                className="px-4 py-2 bg-red-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-red-700 flex items-center gap-2"
+              >
+                {saving ? <span className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" /> : <Trash2 className="w-4 h-4" />}
+                Sí, Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Confirmar Devolver a Borrador */}
+      {showDraftModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setShowDraftModal(false)}>
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="bg-amber-50 border-b border-amber-100 px-6 py-4 flex items-center gap-3">
+              <ArrowLeftRight className="h-6 w-6 text-amber-500" />
+              <h3 className="text-lg font-bold text-amber-900">Devolver a Borrador</h3>
+            </div>
+            <div className="p-6 space-y-4">
+              <p className="text-sm text-gray-600">
+                Esta acción retirará el evento del calendario distrital público y lo devolverá a tu lista de borradores para seguir planificándolo.
+              </p>
+              <p className="text-sm text-gray-600">
+                ¿Deseas continuar?
+              </p>
+            </div>
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
+              <button
+                onClick={() => setShowDraftModal(false)}
+                className="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleDraftConfirm}
+                className="px-4 py-2 bg-amber-500 border border-transparent rounded-md text-sm font-medium text-white hover:bg-amber-600 flex items-center gap-2"
+              >
+                {saving ? <span className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" /> : <ArrowLeftRight className="w-4 h-4" />}
+                Sí, Devolver
+              </button>
             </div>
           </div>
         </div>

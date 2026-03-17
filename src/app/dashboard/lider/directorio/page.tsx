@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Edit2, Trash2, Plus, Loader2, Phone } from "lucide-react";
+import { Edit2, Trash2, Plus, Loader2, Phone, Copy, Check } from "lucide-react";
 
 type Contacto = {
   id: string;
@@ -17,6 +17,7 @@ type Contacto = {
 
 export default function DirectorioLocalPage() {
   const [directorio, setDirectorio] = useState<Contacto[]>([]);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const [iglesias, setIglesias] = useState<any[]>([]);
   const [ministerios, setMinisterios] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -144,6 +145,12 @@ export default function DirectorioLocalPage() {
     fetchData();
   };
 
+  const copyToClipboard = (text: string, id: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
   return (
     <div className="space-y-6">
       <div className="border-b border-gray-200 pb-5">
@@ -259,8 +266,20 @@ export default function DirectorioLocalPage() {
                    <tr key={c.id} className={!c.isActive ? "opacity-50 bg-gray-50" : ""}>
                      <td className="px-6 py-4">
                        <div className="font-medium text-gray-900">{c.name} {c.isActive ? "" : "(Inactivo)"}</div>
-                       <div className="flex items-center text-gray-500 text-sm mt-1 gap-1">
-                         <Phone size={14}/> {c.phone || "Sin teléfono"}
+                       <div className="flex items-center text-gray-500 text-sm mt-1 gap-2">
+                         <div className="flex items-center gap-1">
+                           <Phone size={14}/> {c.phone || "Sin teléfono"}
+                         </div>
+                         {c.phone && (
+                           <button
+                             type="button"
+                             onClick={() => copyToClipboard(c.phone, c.id)}
+                             className="text-gray-400 hover:text-blue-600 transition-colors p-1 rounded-md hover:bg-gray-100"
+                             title="Copiar número"
+                           >
+                             {copiedId === c.id ? <Check size={14} className="text-green-600" /> : <Copy size={14} />}
+                           </button>
+                         )}
                        </div>
                      </td>
                      <td className="px-6 py-4 text-sm text-gray-900">{c.roleLocal}</td>

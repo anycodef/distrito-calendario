@@ -15,15 +15,30 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     const eventoId = Array.isArray(resolvedParams.id) ? resolvedParams.id[0] : resolvedParams.id;
 
     const eventoToUpdate = await prisma.evento.findUnique({
-      where: { id: eventoId, isActive: true }
+      where: { id: eventoId, isActive: true },
+      include: { ministerio: true }
     });
 
     if (!eventoToUpdate) {
       return NextResponse.json({ error: "Evento no encontrado" }, { status: 404 });
     }
 
-    // Verificar si el creador es el mismo (solo Admin puede editar todo)
-    if (eventoToUpdate.creatorId !== (payload as any).id as string && !(payload as any).roles.includes("ADMIN")) {
+    let isAuthorized = false;
+
+    // Admin puede editar todo
+    if ((payload as any).roles.includes("ADMIN")) {
+        isAuthorized = true;
+    }
+    // Creador original puede editar su propio evento (usado por líderes)
+    else if (eventoToUpdate.creatorId === (payload as any).id as string) {
+        isAuthorized = true;
+    }
+    // Si el evento es del Distrito, CUALQUIER SUPERVISOR puede editarlo
+    else if (eventoToUpdate.ministerio?.name.includes("Distrito") && (payload as any).roles.includes("SUPERVISOR")) {
+        isAuthorized = true;
+    }
+
+    if (!isAuthorized) {
       return NextResponse.json({ error: "No tienes permisos para editar este evento" }, { status: 403 });
     }
 
@@ -66,15 +81,30 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     const eventoId = Array.isArray(resolvedParams.id) ? resolvedParams.id[0] : resolvedParams.id;
 
     const eventoToDelete = await prisma.evento.findUnique({
-      where: { id: eventoId, isActive: true }
+      where: { id: eventoId, isActive: true },
+      include: { ministerio: true }
     });
 
     if (!eventoToDelete) {
       return NextResponse.json({ error: "Evento no encontrado" }, { status: 404 });
     }
 
-    // Verificar si el creador es el mismo (solo Admin puede borrar todo)
-    if (eventoToDelete.creatorId !== (payload as any).id as string && !(payload as any).roles.includes("ADMIN")) {
+    let isAuthorized = false;
+
+    // Admin puede borrar todo
+    if ((payload as any).roles.includes("ADMIN")) {
+        isAuthorized = true;
+    }
+    // Creador original puede borrar (lider)
+    else if (eventoToDelete.creatorId === (payload as any).id as string) {
+        isAuthorized = true;
+    }
+    // Supervisor puede borrar eventos de Distrito
+    else if (eventoToDelete.ministerio?.name.includes("Distrito") && (payload as any).roles.includes("SUPERVISOR")) {
+        isAuthorized = true;
+    }
+
+    if (!isAuthorized) {
       return NextResponse.json({ error: "No tienes permisos para eliminar este evento" }, { status: 403 });
     }
 

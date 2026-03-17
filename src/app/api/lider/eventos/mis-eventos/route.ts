@@ -13,11 +13,20 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
+    const context = searchParams.get('context');
 
     let whereClause: any = {
         isActive: true,
-        creatorId: (payload as any).id as string
     };
+
+    if (context === "supervisor" && (payload as any).roles.includes("SUPERVISOR")) {
+      // El supervisor gestiona eventos del ministerio Distrito
+      whereClause.ministerio = { name: { contains: "Distrito" } };
+    } else {
+      // El lider gestiona eventos creados por él, excluyendo los del distrito para que no se crucen.
+      whereClause.creatorId = (payload as any).id as string;
+      whereClause.ministerio = { name: { not: { contains: "Distrito" } } };
+    }
 
     if (status) {
         whereClause.status = status;

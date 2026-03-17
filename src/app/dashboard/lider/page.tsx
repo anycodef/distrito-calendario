@@ -14,8 +14,8 @@ export default function LiderDashboardPage() {
     const fetchData = async () => {
       try {
         const [resMin, resEvt] = await Promise.all([
-          fetch("/api/lider/ministerios"),
-          fetch("/api/lider/eventos/mis-eventos?status=PUBLISHED")
+          fetch("/api/lider/ministerios?context=lider"),
+          fetch("/api/lider/eventos/mis-eventos?context=lider&?status=PUBLISHED")
         ]);
 
         if (resMin.ok) {

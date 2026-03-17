@@ -13,7 +13,7 @@ export default function LiderMinisteriosPage() {
 
   const fetchMinisterios = async () => {
     setLoading(true);
-    const res = await fetch("/api/lider/ministerios");
+    const res = await fetch("/api/lider/ministerios?context=lider");
     if (res.ok) setMinisterios(await res.json());
     setLoading(false);
   };
@@ -31,7 +31,7 @@ export default function LiderMinisteriosPage() {
     if (!editMin) return;
     setSaving(true);
 
-    await fetch("/api/lider/ministerios", {
+    await fetch("/api/lider/ministerios?context=lider", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: editMin.id, color })

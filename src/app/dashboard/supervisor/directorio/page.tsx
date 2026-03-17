@@ -49,7 +49,7 @@ export default function DirectorioLocalPage() {
     }
 
     // Obtenemos los ministerios del lider para el select
-    const resMin = await fetch("/api/lider/ministerios");
+    const resMin = await fetch("/api/lider/ministerios?context=supervisor&");
 
     if (resDir.ok) setDirectorio(await resDir.json());
     if (resMin.ok) {

@@ -29,7 +29,7 @@ export default function NuevoEventoPage() {
 
   useEffect(() => {
     const fetchMinisterios = async () => {
-      const res = await fetch("/api/lider/ministerios");
+      const res = await fetch("/api/lider/ministerios?context=supervisor&");
       if (res.ok) {
         const data = await res.json();
         setMinisterios(data);

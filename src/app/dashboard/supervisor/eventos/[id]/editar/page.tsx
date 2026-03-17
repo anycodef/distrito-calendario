@@ -37,8 +37,8 @@ export default function EditarEventoPage({ params }: { params: Promise<{ id: str
     const fetchData = async () => {
       try {
         const [resMin, resEvt] = await Promise.all([
-          fetch("/api/lider/ministerios"),
-          fetch(`/api/lider/eventos/mis-eventos`) // Fetch all events created by user to find the one we need
+          fetch("/api/lider/ministerios?context=supervisor&"),
+          fetch(`/api/lider/eventos/mis-eventos?context=supervisor&`) // Fetch all events created by user to find the one we need
         ]);
 
         if (resMin.ok) {

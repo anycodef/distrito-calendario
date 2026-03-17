@@ -190,22 +190,27 @@ export default function MisEventosPage() {
             </div>
           ) : (
             <div className="space-y-4">
-              {filteredEventos.map((ev) => (
-                <div key={ev.id} className={`flex flex-col sm:flex-row gap-4 p-4 border rounded-xl transition-shadow hover:shadow-md cursor-pointer ${activeTab === 'DRAFT' ? 'border-amber-200 bg-amber-50/30' : 'border-gray-200 bg-white'}`} onClick={() => setSelectedEvent(ev)}>
-                  <div className="flex-shrink-0 flex flex-col items-center justify-center w-20 h-20 rounded-lg bg-gray-50 border border-gray-200 shadow-sm self-start">
-                    <span className="text-xs font-semibold text-gray-500 uppercase">{format(new Date(ev.startDate), 'MMM', { locale: es })}</span>
-                    <span className="text-2xl font-bold text-gray-900">{format(new Date(ev.startDate), 'dd')}</span>
+              {filteredEventos.map((ev) => {
+                const isPast = activeTab === 'PUBLISHED' && isBefore(new Date(ev.endDate), now);
+                return (
+                <div key={ev.id} className={`flex flex-col sm:flex-row gap-4 p-4 border rounded-xl transition-shadow hover:shadow-md cursor-pointer ${activeTab === 'DRAFT' ? 'border-amber-200 bg-amber-50/30' : 'border-gray-200 bg-white'} ${isPast ? 'opacity-80 bg-gray-50/50' : ''}`} onClick={() => setSelectedEvent(ev)}>
+                  <div className={`flex-shrink-0 flex flex-col items-center justify-center w-20 h-20 rounded-lg border shadow-sm self-start ${isPast ? 'bg-gray-200 border-gray-300 text-gray-500' : 'bg-gray-50 border-gray-200 text-gray-900'}`}>
+                    <span className={`text-xs font-semibold uppercase ${isPast ? 'text-gray-500' : 'text-gray-500'}`}>{format(new Date(ev.startDate), 'MMM', { locale: es })}</span>
+                    <span className={`text-2xl font-bold ${isPast ? 'text-gray-600' : 'text-gray-900'}`}>{format(new Date(ev.startDate), 'dd')}</span>
                   </div>
 
                   <div className="flex-1 flex flex-col justify-center">
                     <div className="flex items-center gap-2 mb-1">
-                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: ev.ministerio?.color || '#3b82f6' }}></div>
+                      <div className={`w-3 h-3 rounded-full ${isPast ? 'opacity-50' : ''}`} style={{ backgroundColor: ev.ministerio?.color || '#3b82f6' }}></div>
                       <span className="text-xs font-medium text-gray-600 uppercase tracking-wider">{ev.ministerio?.name}</span>
                       {ev.visibility === "PRIVATE" && (
                         <span className="ml-2 inline-flex items-center rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">Privado</span>
                       )}
+                      {isPast && (
+                        <span className="ml-auto inline-flex items-center rounded-md bg-gray-200 px-2 py-0.5 text-xs font-medium text-gray-700 ring-1 ring-inset ring-gray-500/10">Finalizado</span>
+                      )}
                     </div>
-                    <h4 className="text-lg font-bold text-gray-900 leading-tight">{ev.title}</h4>
+                    <h4 className={`text-lg font-bold leading-tight ${isPast ? 'text-gray-600 line-through decoration-gray-400' : 'text-gray-900'}`}>{ev.title}</h4>
                     <div className="mt-2 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-gray-500">
                       <span className="flex items-center gap-1">
                         <CalendarRange className="w-4 h-4" />
@@ -220,7 +225,7 @@ export default function MisEventosPage() {
                     </div>
                   </div>
 
-                  <div className="flex sm:flex-col justify-end gap-2 sm:border-l sm:border-gray-100 sm:pl-4 pt-4 sm:pt-0 mt-4 sm:mt-0 border-t sm:border-t-0 border-gray-100" onClick={(e) => e.stopPropagation()}>
+                  <div className={`flex sm:flex-col justify-end gap-2 sm:border-l sm:pl-4 pt-4 sm:pt-0 mt-4 sm:mt-0 border-t sm:border-t-0 ${isPast ? 'sm:border-gray-200 border-gray-200' : 'sm:border-gray-100 border-gray-100'}`} onClick={(e) => e.stopPropagation()}>
                     {activeTab === 'DRAFT' && (
                       <button onClick={() => setEventToPublish(ev)} className="flex-1 sm:flex-none inline-flex justify-center items-center gap-1 px-3 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 transition-colors">
                         <Send className="w-4 h-4" /> Publicar
@@ -234,7 +239,7 @@ export default function MisEventosPage() {
                     </button>
                   </div>
                 </div>
-              ))}
+              )})}
             </div>
           )}
         </div>

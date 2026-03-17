@@ -22,8 +22,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: "Evento no encontrado" }, { status: 404 });
     }
 
-    // Verificar si el creador es el mismo
-    if (eventoToUpdate.creatorId !== (payload as any).id as string && !(payload as any).roles.includes("ADMIN")) {
+    // Verificar si el creador es el mismo o si es SUPERVISOR/ADMIN
+    if (eventoToUpdate.creatorId !== (payload as any).id as string && !(payload as any).roles.includes("ADMIN") && !(payload as any).roles.includes("SUPERVISOR")) {
       return NextResponse.json({ error: "No tienes permisos para editar este evento" }, { status: 403 });
     }
 
@@ -73,8 +73,8 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
       return NextResponse.json({ error: "Evento no encontrado" }, { status: 404 });
     }
 
-    // Verificar si el creador es el mismo
-    if (eventoToDelete.creatorId !== (payload as any).id as string && !(payload as any).roles.includes("ADMIN")) {
+    // Verificar si el creador es el mismo o si es SUPERVISOR/ADMIN
+    if (eventoToDelete.creatorId !== (payload as any).id as string && !(payload as any).roles.includes("ADMIN") && !(payload as any).roles.includes("SUPERVISOR")) {
       return NextResponse.json({ error: "No tienes permisos para eliminar este evento" }, { status: 403 });
     }
 

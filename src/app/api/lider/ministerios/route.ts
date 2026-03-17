@@ -12,10 +12,13 @@ export async function GET(req: NextRequest) {
   if (!payload) return NextResponse.json({ message: "No autorizado" }, { status: 401 });
 
   try {
+    let whereClause: any = {};
+    if (!(payload as any).roles.includes("SUPERVISOR")) {
+       whereClause.lideresActivos = { some: { id: payload.id as string } };
+    }
+
     const ministerios = await prisma.ministerio.findMany({
-      where: {
-        lideresActivos: { some: { id: payload.id as string } }
-      },
+      where: whereClause,
       include: { categoria: true }
     });
     return NextResponse.json(ministerios);

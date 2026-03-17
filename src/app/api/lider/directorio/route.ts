@@ -12,10 +12,15 @@ export async function GET(req: NextRequest) {
   if (!payload) return NextResponse.json({ message: "No autorizado" }, { status: 401 });
 
   try {
+    let whereClause: any = {};
+
+    // Si es lider, ve solo sus contactos. Si es Supervisor, ve todos.
+    if (!(payload as any).roles.includes("SUPERVISOR")) {
+      whereClause.liderId = payload.id as string;
+    }
+
     const directorio = await prisma.directorioLocal.findMany({
-      where: {
-        liderId: payload.id as string
-      },
+      where: whereClause,
       include: {
         iglesia: true,
         ministerio: { select: { id: true, name: true, color: true } }

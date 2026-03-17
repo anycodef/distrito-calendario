@@ -16,9 +16,14 @@ export async function PUT(req: NextRequest, context: { params: Promise<{ id: str
     const params = await context.params;
     const id = params.id;
 
-    // Verificar que el contacto pertenezca a este líder
+    // Verificar que el contacto pertenezca a este líder (o sea supervisor)
+    let whereClause: any = { id };
+    if (!(payload as any).roles.includes("SUPERVISOR")) {
+      whereClause.liderId = payload.id as string;
+    }
+
     const contacto = await prisma.directorioLocal.findFirst({
-      where: { id, liderId: payload.id as string }
+      where: whereClause
     });
 
     if (!contacto) return NextResponse.json({ message: "No encontrado o sin permiso" }, { status: 404 });
@@ -44,8 +49,13 @@ export async function DELETE(req: NextRequest, context: { params: Promise<{ id: 
     const params = await context.params;
     const id = params.id;
 
+    let whereClause: any = { id };
+    if (!(payload as any).roles.includes("SUPERVISOR")) {
+      whereClause.liderId = payload.id as string;
+    }
+
     const contacto = await prisma.directorioLocal.findFirst({
-      where: { id, liderId: payload.id as string }
+      where: whereClause
     });
 
     if (!contacto) return NextResponse.json({ message: "No encontrado o sin permiso" }, { status: 404 });

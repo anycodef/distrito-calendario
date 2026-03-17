@@ -1,4 +1,5 @@
 import LiderSidebar from "@/components/lider/LiderSidebar";
+import RoleSwitcher from "@/components/RoleSwitcher";
 
 export default function LiderLayout({
   children,
@@ -15,9 +16,7 @@ export default function LiderLayout({
               Distrito 3 - Área 6
             </h2>
             <div className="flex items-center gap-x-4 lg:gap-x-6">
-              <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-700 ring-1 ring-inset ring-slate-700/10">
-                Líder Distrital
-              </span>
+              <RoleSwitcher />
             </div>
           </div>
         </header>

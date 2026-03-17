@@ -1,4 +1,5 @@
 import AdminSidebar from "@/components/admin/AdminSidebar";
+import RoleSwitcher from "@/components/RoleSwitcher";
 
 export default function AdminLayout({
   children,
@@ -15,9 +16,7 @@ export default function AdminLayout({
               Panel de Administración
             </h2>
             <div className="flex items-center gap-x-4 lg:gap-x-6">
-              <span className="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
-                Administrador
-              </span>
+              <RoleSwitcher />
             </div>
           </div>
         </header>

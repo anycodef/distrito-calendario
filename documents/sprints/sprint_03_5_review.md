@@ -14,3 +14,9 @@ Se realizó un refactor intermedio antes del Sprint 4 para ajustar la lógica de
 ## 2. Decisiones Técnicas
 *   **Compatibilidad en BD:** Al usar PostgreSQL pudimos utilizar la sintaxis `@default([LIDER])` en Prisma para manejar arreglos nativos de un Enum, evitando crear tablas pivote adicionales para roles que sumarían carga a las consultas.
 *   **Manejo de UI:** La interfaz fue refactorizada para permitir desmarcar o marcar libremente los roles, bloqueando el submit si el array de roles resultante queda vacío.
+
+## 3. Selector Multi-Rol en Interfaz (Header)
+Se implementó un nuevo componente visual `RoleSwitcher` (y su correspondiente ruta `/api/auth/me` para leer la sesión) que fue inyectado en el `header` de todos los dashboards (`/dashboard/admin/layout.tsx` y `/dashboard/lider/layout.tsx`).
+
+*   Si el usuario solo tiene un rol asignado, el componente renderiza una pastilla estática (idéntico al diseño original).
+*   Si el usuario tiene múltiples roles asignados (Ej. es Lider y Admin al mismo tiempo), la pastilla se convierte en un botón interactivo (dropdown) que le permite alternar la vista entre los distintos paneles administrativos y ministeriales a voluntad de forma cómoda.

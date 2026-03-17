@@ -9,7 +9,8 @@ La plataforma funcionará bajo un modelo basado en roles (RBAC).
 ### Administrador (Admin)
 *   Tiene control total sobre el sistema. (Sus credenciales iniciales se crearán de forma predeterminada al levantar el sistema, empleando una contraseña segura).
 *   **Permisos de CRUD Completo:** Puede crear, leer, actualizar y eliminar de forma permanente ("hard delete") cualquier entidad en la base de datos (Iglesias, Ministerios, Usuarios, Eventos). Las eliminaciones duras incluyen procesos en cascada para evitar inconsistencias.
-*   **Gestión de Cuentas:** Crea y asigna credenciales (usuario/contraseña) para Supervisores Distritales y Líderes Distritales.
+*   **Gestión de Cuentas (Multi-Rol):** Crea credenciales de usuarios. Un usuario puede tener **más de un rol simultáneamente** (Ej. ADMIN y LIDER a la vez). Al crear al usuario, el Administrador selecciona todos los roles que le apliquen mediante un sistema de opciones múltiples (checkboxes).
+*   **Asociación de Iglesia:** Al momento de gestionar una cuenta, el Administrador puede asociar de forma opcional al usuario con **una iglesia local** seleccionada desde el catálogo paramétrico.
 
 ### Supervisor Distrital
 *   Actúa como un Líder Distrital teniendo a su cargo el "ministerio" principal denominado "Distrito 3", lo que significa que gestiona los eventos generales a nivel de todo el distrito.

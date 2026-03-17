@@ -1,7 +1,7 @@
 # Matriz de Roles y Permisos
 
 El sistema de calendario digital del Distrito 3 cuenta con una arquitectura de control de acceso basada en roles (RBAC).
-Existen **únicamente tres roles** en todo el sistema. A continuación se detallan las capacidades y restricciones de cada uno:
+Existen **tres roles** base en el sistema, pero **un mismo usuario puede poseer múltiples roles simultáneamente** (por ejemplo, ser `ADMIN` y `LIDER` al mismo tiempo). A continuación se detallan las capacidades y restricciones asociadas a cada rol individualmente:
 
 ---
 

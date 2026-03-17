@@ -23,7 +23,7 @@ async function main() {
       username: defaultAdminUsername,
       password: adminPassword,
       name: "Súper Administrador",
-      role: "ADMIN",
+      roles: ["ADMIN"],
     },
   });
   console.log("✅ Administrador creado/verificado:", admin.username);

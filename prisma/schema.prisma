@@ -22,12 +22,14 @@ model User {
   name      String
   username  String   @unique
   password  String   // bcrypt hash
-  role      Role     @default(LIDER)
+  roles     Role[]   @default([LIDER]) // Arreglo de roles en Postgres
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   isActive  Boolean  @default(true) // Soft delete
 
   // Relaciones
+  iglesiaId        String?
+  iglesia          Iglesia?           @relation("UserIglesia", fields: [iglesiaId], references: [id])
   ministerios      Ministerio[]       @relation("UserMinisterios")
   historialLideres HistorialLider[]
   eventosCreados   Evento[]
@@ -46,6 +48,7 @@ model Iglesia {
   isActive  Boolean  @default(true)
 
   // Relaciones
+  usuariosAsociados  User[]            @relation("UserIglesia")
   miembrosDirectorio DirectorioLocal[]
 }
 

@@ -4,11 +4,15 @@ import bcrypt from "bcrypt";
 
 export async function PUT(req: Request, context: { params: Promise<{ id: string }> }) {
   try {
-    const { name, username, password, role, isActive } = await req.json();
+    const { name, username, password, roles, iglesiaId, isActive } = await req.json();
     const params = await context.params;
     const id = params.id;
 
-    const dataToUpdate: any = { name, username, role, isActive };
+    const dataToUpdate: any = { name, username, roles, iglesiaId: iglesiaId || null, isActive };
+
+    if (!roles || roles.length === 0) {
+      return NextResponse.json({ message: "El usuario debe tener al menos un rol" }, { status: 400 });
+    }
 
     // Si envían contraseña, actualizarla (reset password)
     if (password && password.trim() !== "") {
@@ -18,7 +22,7 @@ export async function PUT(req: Request, context: { params: Promise<{ id: string 
     const user = await prisma.user.update({
       where: { id },
       data: dataToUpdate,
-      select: { id: true, name: true, username: true, role: true, isActive: true },
+      select: { id: true, name: true, username: true, roles: true, iglesiaId: true, isActive: true },
     });
 
     return NextResponse.json(user);

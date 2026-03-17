@@ -26,7 +26,7 @@ La interfaz de usuario deberá transmitir profesionalidad e identidad:
 
 ## 5. Arquitectura de Base de Datos (Alto Nivel)
 Aunque la estructura de BD evolucionará, los pilares centrales serán:
-*   **Usuarios (Líderes, Supervisor, Administrador):** Nombres, credenciales (usuario y contraseña encriptada), rol, etc.
+*   **Usuarios (Líderes, Supervisor, Administrador):** Nombres, credenciales (usuario y contraseña encriptada), etc. **Un usuario puede poseer múltiples roles simultáneamente** (Ej. ser Administrador y Líder a la vez). Opcionalmente, un usuario puede estar asociado a **una** Iglesia Local.
 *   **Iglesias (Paramétrica):** Catálogo de las 8 iglesias del distrito para su fácil selección.
 *   **Categorías de Ministerios (Paramétrica):** Agrupaciones lógicas para los ministerios (Ej. Especializados, Familia/Adultos, Departamentos). Permite organizar y filtrar los ministerios de manera jerárquica.
 *   **Ministerios:** Nombre, color representativo, logo asignado, y su relación con una Categoría de Ministerio.

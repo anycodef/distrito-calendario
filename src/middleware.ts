@@ -24,29 +24,31 @@ export async function middleware(request: NextRequest) {
         algorithms: ["HS256"],
       });
 
+      const roles = (payload.roles as string[]) || [];
+
       // Protecciones de Roles (Dashboard)
-      if (request.nextUrl.pathname.startsWith("/dashboard/admin") && payload.role !== "ADMIN") {
+      if (request.nextUrl.pathname.startsWith("/dashboard/admin") && !roles.includes("ADMIN")) {
         return NextResponse.redirect(new URL("/login", request.url));
       }
 
-      if (request.nextUrl.pathname.startsWith("/dashboard/supervisor") && payload.role !== "SUPERVISOR") {
+      if (request.nextUrl.pathname.startsWith("/dashboard/supervisor") && !roles.includes("SUPERVISOR")) {
         return NextResponse.redirect(new URL("/login", request.url));
       }
 
-      if (request.nextUrl.pathname.startsWith("/dashboard/lider") && payload.role !== "LIDER") {
+      if (request.nextUrl.pathname.startsWith("/dashboard/lider") && !roles.includes("LIDER")) {
         return NextResponse.redirect(new URL("/login", request.url));
       }
 
       // Protección estricta para API Admin
-      if (request.nextUrl.pathname.startsWith("/api/admin") && payload.role !== "ADMIN") {
+      if (request.nextUrl.pathname.startsWith("/api/admin") && !roles.includes("ADMIN")) {
         return NextResponse.json({ message: "Acceso no autorizado" }, { status: 403 });
       }
 
-      // Si tiene sesión y va a /login o la raíz, redirigirlo a su respectivo dashboard
+      // Si tiene sesión y va a /login o la raíz, redirigirlo al de mayor jerarquía que posea
       if (request.nextUrl.pathname === "/login" || request.nextUrl.pathname === "/") {
-        if (payload.role === "ADMIN") return NextResponse.redirect(new URL("/dashboard/admin", request.url));
-        if (payload.role === "SUPERVISOR") return NextResponse.redirect(new URL("/dashboard/supervisor", request.url));
-        if (payload.role === "LIDER") return NextResponse.redirect(new URL("/dashboard/lider", request.url));
+        if (roles.includes("ADMIN")) return NextResponse.redirect(new URL("/dashboard/admin", request.url));
+        if (roles.includes("SUPERVISOR")) return NextResponse.redirect(new URL("/dashboard/supervisor", request.url));
+        if (roles.includes("LIDER")) return NextResponse.redirect(new URL("/dashboard/lider", request.url));
       }
     }
   } catch (error) {

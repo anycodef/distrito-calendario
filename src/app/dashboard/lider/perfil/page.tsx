@@ -74,7 +74,7 @@ export default function LiderPerfilPage() {
             </div>
             <div>
               <h4 className="text-lg font-bold text-gray-900">{profile?.name}</h4>
-              <p className="text-sm text-gray-500">@{profile?.username} • {profile?.role}</p>
+              <p className="text-sm text-gray-500">@{profile?.username} • {profile?.roles?.join(', ')}</p>
             </div>
           </div>
         </div>

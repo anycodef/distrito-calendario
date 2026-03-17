@@ -7,12 +7,14 @@ type User = {
   id: string;
   name: string;
   username: string;
-  role: "ADMIN" | "SUPERVISOR" | "LIDER";
+  roles: ("ADMIN" | "SUPERVISOR" | "LIDER")[];
+  iglesiaId: string | null;
   isActive: boolean;
 };
 
 export default function UsuariosAdminPage() {
   const [usuarios, setUsuarios] = useState<User[]>([]);
+  const [iglesias, setIglesias] = useState<{id: string, name: string}[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Form states
@@ -20,29 +22,40 @@ export default function UsuariosAdminPage() {
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<"ADMIN" | "SUPERVISOR" | "LIDER">("LIDER");
+  const [roles, setRoles] = useState<("ADMIN" | "SUPERVISOR" | "LIDER")[]>(["LIDER"]);
+  const [iglesiaId, setIglesiaId] = useState("");
   const [isActive, setIsActive] = useState(true);
 
   const [formError, setFormError] = useState("");
 
-  const fetchUsuarios = async () => {
+  const fetchData = async () => {
     setLoading(true);
-    const res = await fetch("/api/admin/usuarios");
-    const data = await res.json();
-    setUsuarios(data);
+    const resUsers = await fetch("/api/admin/usuarios");
+    const resIglesias = await fetch("/api/admin/iglesias");
+    setUsuarios(await resUsers.json());
+    setIglesias(await resIglesias.json());
     setLoading(false);
   };
 
   useEffect(() => {
-    fetchUsuarios();
+    fetchData();
   }, []);
+
+  const handleRoleToggle = (role: "ADMIN" | "SUPERVISOR" | "LIDER") => {
+    if (roles.includes(role)) {
+      setRoles(roles.filter(r => r !== role));
+    } else {
+      setRoles([...roles, role]);
+    }
+  };
 
   const resetForm = () => {
     setEditId(null);
     setName("");
     setUsername("");
     setPassword("");
-    setRole("LIDER");
+    setRoles(["LIDER"]);
+    setIglesiaId("");
     setIsActive(true);
     setFormError("");
   };
@@ -56,12 +69,17 @@ export default function UsuariosAdminPage() {
       return;
     }
 
+    if (roles.length === 0) {
+      setFormError("El usuario debe tener al menos un rol asignado");
+      return;
+    }
+
     if (!editId && !password.trim()) {
       setFormError("La contraseña es obligatoria para nuevos usuarios");
       return;
     }
 
-    const payload: any = { name, username, role, isActive };
+    const payload: any = { name, username, roles, iglesiaId: iglesiaId || null, isActive };
     if (password.trim() !== "") {
       payload.password = password; // Se enviará para que el backend la encripte
     }
@@ -83,7 +101,7 @@ export default function UsuariosAdminPage() {
     }
 
     resetForm();
-    fetchUsuarios();
+    fetchData();
   };
 
   const handleEdit = (user: User) => {
@@ -91,7 +109,8 @@ export default function UsuariosAdminPage() {
     setName(user.name);
     setUsername(user.username);
     setPassword(""); // Dejamos en blanco intencionalmente
-    setRole(user.role);
+    setRoles(user.roles || []);
+    setIglesiaId(user.iglesiaId || "");
     setIsActive(user.isActive);
     setFormError("");
   };
@@ -151,16 +170,30 @@ export default function UsuariosAdminPage() {
                 placeholder="••••••••"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Rol del Sistema</label>
+            <div className="lg:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Roles del Sistema (Puede elegir múltiples)</label>
+              <div className="flex gap-4">
+                <label className="flex items-center gap-2 text-sm text-gray-700">
+                  <input type="checkbox" checked={roles.includes("LIDER")} onChange={() => handleRoleToggle("LIDER")} /> Líder Distrital
+                </label>
+                <label className="flex items-center gap-2 text-sm text-gray-700">
+                  <input type="checkbox" checked={roles.includes("SUPERVISOR")} onChange={() => handleRoleToggle("SUPERVISOR")} /> Supervisor Distrital
+                </label>
+                <label className="flex items-center gap-2 text-sm text-gray-700">
+                  <input type="checkbox" checked={roles.includes("ADMIN")} onChange={() => handleRoleToggle("ADMIN")} /> Administrador
+                </label>
+              </div>
+            </div>
+
+            <div className="lg:col-span-2">
+              <label className="block text-sm font-medium text-gray-700">Iglesia Local Asignada (Opcional)</label>
               <select
-                value={role}
-                onChange={(e) => setRole(e.target.value as any)}
+                value={iglesiaId}
+                onChange={(e) => setIglesiaId(e.target.value)}
                 className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 sm:text-sm text-black"
               >
-                <option value="LIDER">Líder Distrital</option>
-                <option value="SUPERVISOR">Supervisor Distrital</option>
-                <option value="ADMIN">Administrador</option>
+                <option value="">-- Ninguna (Nivel Distrital) --</option>
+                {iglesias.map(i => <option key={i.id} value={i.id}>{i.name}</option>)}
               </select>
             </div>
           </div>
@@ -212,7 +245,7 @@ export default function UsuariosAdminPage() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Usuario</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Rol</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Roles</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Estado</th>
                   <th className="px-6 py-3 text-right text-sm font-semibold text-gray-900">Acciones</th>
                 </tr>
@@ -222,16 +255,20 @@ export default function UsuariosAdminPage() {
                   <tr key={user.id}>
                     <td className="whitespace-nowrap px-6 py-4">
                       <div className="font-medium text-gray-900">{user.name}</div>
-                      <div className="text-gray-500 text-sm">@{user.username}</div>
+                      <div className="text-gray-500 text-sm">@{user.username} {user.iglesiaId ? '(Iglesia Local)' : ''}</div>
                     </td>
                     <td className="whitespace-nowrap px-6 py-4">
-                      <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${
-                        user.role === 'ADMIN' ? 'bg-purple-50 text-purple-700 ring-purple-700/10' :
-                        user.role === 'SUPERVISOR' ? 'bg-yellow-50 text-yellow-800 ring-yellow-600/20' :
-                        'bg-blue-50 text-blue-700 ring-blue-700/10'
-                      }`}>
-                        {user.role}
-                      </span>
+                      <div className="flex gap-1 flex-wrap">
+                        {user.roles?.map(r => (
+                           <span key={r} className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${
+                              r === 'ADMIN' ? 'bg-purple-50 text-purple-700 ring-purple-700/10' :
+                              r === 'SUPERVISOR' ? 'bg-yellow-50 text-yellow-800 ring-yellow-600/20' :
+                              'bg-blue-50 text-blue-700 ring-blue-700/10'
+                            }`}>
+                              {r}
+                            </span>
+                        ))}
+                      </div>
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                       <span className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${user.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>

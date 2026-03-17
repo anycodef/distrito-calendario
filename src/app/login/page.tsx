@@ -28,10 +28,11 @@ export default function LoginPage() {
         throw new Error(data.message || "Error al iniciar sesión");
       }
 
-      // Redirigir según el rol
-      if (data.role === "ADMIN") {
+      // Redirigir según el rol de mayor jerarquía del array 'roles'
+      const roles = data.roles || [];
+      if (roles.includes("ADMIN")) {
         router.push("/dashboard/admin");
-      } else if (data.role === "SUPERVISOR") {
+      } else if (roles.includes("SUPERVISOR")) {
         router.push("/dashboard/supervisor");
       } else {
         router.push("/dashboard/lider");

@@ -37,14 +37,14 @@ export async function POST(req: Request) {
     // Crear sesión (JWT)
     const sessionData = {
       id: user.id,
-      role: user.role,
+      roles: user.roles, // Array de roles
       name: user.name,
     };
 
     const sessionToken = await encrypt(sessionData);
 
     const res = NextResponse.json(
-      { message: "Inicio de sesión exitoso", role: user.role },
+      { message: "Inicio de sesión exitoso", roles: user.roles },
       { status: 200 }
     );
 

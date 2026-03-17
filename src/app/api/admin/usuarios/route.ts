@@ -10,7 +10,8 @@ export async function GET() {
         id: true,
         name: true,
         username: true,
-        role: true,
+        roles: true,
+        iglesiaId: true,
         isActive: true,
         createdAt: true,
       },
@@ -23,10 +24,10 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const { name, username, password, role } = await req.json();
+    const { name, username, password, roles, iglesiaId } = await req.json();
 
-    if (!name || !username || !password || !role) {
-      return NextResponse.json({ message: "Todos los campos son requeridos" }, { status: 400 });
+    if (!name || !username || !password || !roles || roles.length === 0) {
+      return NextResponse.json({ message: "Todos los campos principales son requeridos y debe seleccionar al menos un rol" }, { status: 400 });
     }
 
     const exists = await prisma.user.findUnique({ where: { username } });
@@ -41,7 +42,8 @@ export async function POST(req: Request) {
         name,
         username,
         password: hashedPassword,
-        role,
+        roles,
+        iglesiaId: iglesiaId || null,
       },
     });
 

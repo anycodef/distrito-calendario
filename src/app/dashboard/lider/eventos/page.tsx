@@ -18,6 +18,7 @@ export default function MisEventosPage() {
 
   const fetchEventos = async () => {
     setLoading(true);
+    setEventos([]); // Limpiamos la lista para evitar flash de eventos de la pestaña anterior
     try {
       const res = await fetch(`/api/lider/eventos/mis-eventos?context=lider&status=${activeTab}`);
       if (res.ok) {
@@ -135,7 +136,7 @@ export default function MisEventosPage() {
                   : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 hover:bg-gray-50"
               } w-1/2 flex items-center justify-center border-b-2 py-4 px-1 text-center text-sm font-medium transition-colors`}
             >
-              Borradores ({eventos.length > 0 && activeTab === "DRAFT" ? eventos.length : "..."})
+              Borradores {!loading && activeTab === "DRAFT" ? `(${eventos.length})` : loading && activeTab === "DRAFT" ? "(...)" : ""}
             </button>
           </nav>
         </div>

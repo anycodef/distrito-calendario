@@ -13,6 +13,7 @@ export default function NuevoEventoPage() {
   const [checkingConflicts, setCheckingConflicts] = useState(false);
   const [conflictos, setConflictos] = useState<any[]>([]);
   const [showConflictsModal, setShowConflictsModal] = useState(false);
+  const [formError, setFormError] = useState("");
 
   // Form State
   const [formData, setFormData] = useState({
@@ -89,11 +90,18 @@ export default function NuevoEventoPage() {
 
   const handleSubmit = async (e: React.FormEvent, status: "PUBLISHED" | "DRAFT") => {
     e.preventDefault();
+    setFormError("");
     setLoading(true);
+
+    if (!formData.title || !formData.ministerioId || !formData.startDate || !formData.endDate) {
+      setFormError("Por favor completa todos los campos obligatorios (*).");
+      setLoading(false);
+      return;
+    }
 
     // Validación básica de fechas
     if (new Date(formData.endDate) <= new Date(formData.startDate)) {
-        alert("La fecha de fin debe ser posterior a la fecha de inicio.");
+        setFormError("La fecha de fin debe ser posterior a la fecha de inicio.");
         setLoading(false);
         return;
     }
@@ -117,11 +125,11 @@ export default function NuevoEventoPage() {
         router.refresh();
       } else {
         const err = await res.json();
-        alert(err.error || "Error al crear el evento");
+        setFormError(err.error || "Error al crear el evento");
       }
     } catch (error) {
       console.error(error);
-      alert("Ocurrió un error inesperado");
+      setFormError("Ocurrió un error de red inesperado.");
     } finally {
       setLoading(false);
     }
@@ -146,6 +154,12 @@ export default function NuevoEventoPage() {
 
       <div className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
         <form className="px-4 py-6 sm:p-8">
+          {formError && (
+             <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 text-sm rounded-md font-medium">
+               {formError}
+             </div>
+          )}
+
           <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
 
             {/* Título */}

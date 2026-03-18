@@ -13,6 +13,7 @@ export default function NuevoEventoPage() {
   const [checkingConflicts, setCheckingConflicts] = useState(false);
   const [conflictos, setConflictos] = useState<any[]>([]);
   const [showConflictsModal, setShowConflictsModal] = useState(false);
+  const [formError, setFormError] = useState("");
 
   // Form State
   const [formData, setFormData] = useState({
@@ -89,11 +90,18 @@ export default function NuevoEventoPage() {
 
   const handleSubmit = async (e: React.FormEvent, status: "PUBLISHED" | "DRAFT") => {
     e.preventDefault();
+    setFormError("");
     setLoading(true);
+
+    if (!formData.title || !formData.ministerioId || !formData.startDate || !formData.endDate) {
+      setFormError("Por favor completa todos los campos obligatorios (*). El organizador debe estar cargado.");
+      setLoading(false);
+      return;
+    }
 
     // Validación básica de fechas
     if (new Date(formData.endDate) <= new Date(formData.startDate)) {
-        alert("La fecha de fin debe ser posterior a la fecha de inicio.");
+        setFormError("La fecha de fin debe ser posterior a la fecha de inicio.");
         setLoading(false);
         return;
     }
@@ -117,11 +125,11 @@ export default function NuevoEventoPage() {
         router.refresh();
       } else {
         const err = await res.json();
-        alert(err.error || "Error al crear el evento");
+        setFormError(err.error || "Error al crear el evento");
       }
     } catch (error) {
       console.error(error);
-      alert("Ocurrió un error inesperado");
+      setFormError("Ocurrió un error de red inesperado.");
     } finally {
       setLoading(false);
     }
@@ -146,6 +154,12 @@ export default function NuevoEventoPage() {
 
       <div className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
         <form className="px-4 py-6 sm:p-8">
+          {formError && (
+             <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 text-sm rounded-md font-medium">
+               {formError}
+             </div>
+          )}
+
           <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
 
             {/* Título */}
@@ -169,23 +183,23 @@ export default function NuevoEventoPage() {
 
             {/* Ministerio - Sólo lectura para Supervisor (asume su ministerio global) */}
             <div className="sm:col-span-3">
-              <label htmlFor="ministerioId" className="block text-sm font-medium leading-6 text-gray-500">
-                Organizador del Evento
+              <label className="block text-sm font-medium leading-6 text-gray-700">
+                Organizador del Evento <span className="text-red-500">*</span>
               </label>
               <div className="mt-2">
-                <select
-                  id="ministerioId"
-                  name="ministerioId"
-                  required
-                  disabled
-                  value={formData.ministerioId}
-                  className="block w-full rounded-md border-0 py-1.5 bg-gray-50 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
-                >
-                  {ministerios.map((min) => (
-                    <option key={min.id} value={min.id}>{min.name}</option>
-                  ))}
-                  {ministerios.length === 0 && <option value="">Cargando distrito...</option>}
-                </select>
+                {ministerios.length === 0 ? (
+                  <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-500">
+                    <span className="animate-spin border-2 border-gray-400 border-t-transparent rounded-full w-4 h-4"></span>
+                    Cargando entidad...
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 px-3 py-2 bg-blue-50 border border-blue-200 rounded-md text-sm font-medium text-blue-800">
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: ministerios[0]?.color || '#3b82f6' }}></div>
+                    {ministerios[0].name}
+                  </div>
+                )}
+                {/* Input oculto para enviar el ID correctamente si es necesario en lógica tradicional,
+                    aunque manejamos payload manualmente */}
               </div>
             </div>
 

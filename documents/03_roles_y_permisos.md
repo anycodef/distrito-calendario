@@ -1,7 +1,11 @@
 # Matriz de Roles y Permisos
 
 El sistema de calendario digital del Distrito 3 cuenta con una arquitectura de control de acceso basada en roles (RBAC).
-Existen **tres roles** base en el sistema, pero **un mismo usuario puede poseer múltiples roles simultáneamente** (por ejemplo, ser `ADMIN` y `LIDER` al mismo tiempo). A continuación se detallan las capacidades y restricciones asociadas a cada rol individualmente:
+Existen **tres roles** base en el sistema, pero **un mismo usuario puede poseer múltiples roles simultáneamente** (por ejemplo, ser `SUPERVISOR` y `LIDER` al mismo tiempo).
+
+Para garantizar que los usuarios con múltiples roles no mezclen contextos por accidente, la plataforma utiliza **Segregación de Contexto (Multi-Rol)** mediante parámetros en las rutas (ej. `?context=lider` y `?context=supervisor`). Esto significa que cuando un usuario entra a su panel de "Supervisor", verá y gestionará estrictamente los eventos generales del distrito, y cuando entre a su panel de "Líder", gestionará únicamente los eventos de los ministerios específicos (ej. Jóvenes, Niños) que tenga asignados, sin cruzar información.
+
+A continuación se detallan las capacidades y restricciones asociadas a cada rol individualmente:
 
 ---
 
@@ -20,7 +24,7 @@ Es el rol de máxima jerarquía. Se encarga de la configuración estructural de 
 Actúa como la máxima autoridad de liderazgo y supervisión, pero a nivel de sistema se comporta como un líder de amplio alcance enfocado en la *observación y gestión de los eventos distritales*, no en la configuración técnica de la plataforma.
 
 **Permisos:**
-*   **Gestión de Eventos de "Distrito 3":** Posee y administra un "Ministerio" virtual llamado "Distrito 3". Dentro de él puede crear, modificar y archivar (soft delete) los eventos generales del distrito.
+*   **Gestión de Eventos de "Distrito 3":** Posee y administra un "Ministerio" virtual llamado "Distrito 3 (General)" (clasificado como 'Organización General' en la base de datos). Dentro de él puede crear, modificar y archivar (soft delete) los eventos generales del distrito. La plataforma se encarga dinámicamente de gestionar este ID (usando fallbacks si no existe inicialmente) sin interrumpir el flujo.
 *   **Visibilidad Extendida (Lectura Global):** Puede visualizar en el calendario **todos** los eventos creados por cualquier ministerio. Esto incluye los eventos "Públicos" y los eventos internos/exclusivos ("Privados") de todos los líderes.
 *   **Historial Propio:** Cuenta con su propio registro de Historial de Liderazgo.
 

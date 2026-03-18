@@ -16,12 +16,32 @@ export async function PUT(req: NextRequest, context: { params: Promise<{ id: str
     const params = await context.params;
     const id = params.id;
 
-    // Verificar que el contacto pertenezca a este líder (el supervisor gestiona solo los suyos)
+    const url = new URL(req.url);
+    const reqContext = url.searchParams.get("context");
+
+    let isAuthorized = false;
+
     const contacto = await prisma.directorioLocal.findFirst({
-      where: { id, liderId: payload.id as string }
+      where: { id },
+      include: { ministerio: true }
     });
 
-    if (!contacto) return NextResponse.json({ message: "No encontrado o sin permiso" }, { status: 404 });
+    if (!contacto) return NextResponse.json({ message: "No encontrado" }, { status: 404 });
+
+    if (reqContext === "supervisor" && (payload as any).roles.includes("SUPERVISOR")) {
+      if (contacto.ministerio?.name.includes("Distrito")) isAuthorized = true;
+    } else {
+      const isLider = await prisma.ministerio.findFirst({
+        where: {
+          id: contacto.ministerioId,
+          lideresActivos: { some: { id: (payload as any).id as string } },
+          name: { not: { contains: "Distrito" } }
+        }
+      });
+      if (isLider) isAuthorized = true;
+    }
+
+    if (!isAuthorized) return NextResponse.json({ message: "No tienes permiso para editar este contacto" }, { status: 403 });
 
     const updatedContacto = await prisma.directorioLocal.update({
       where: { id },
@@ -44,11 +64,32 @@ export async function DELETE(req: NextRequest, context: { params: Promise<{ id: 
     const params = await context.params;
     const id = params.id;
 
+    const url = new URL(req.url);
+    const reqContext = url.searchParams.get("context");
+
+    let isAuthorized = false;
+
     const contacto = await prisma.directorioLocal.findFirst({
-      where: { id, liderId: payload.id as string }
+      where: { id },
+      include: { ministerio: true }
     });
 
-    if (!contacto) return NextResponse.json({ message: "No encontrado o sin permiso" }, { status: 404 });
+    if (!contacto) return NextResponse.json({ message: "No encontrado" }, { status: 404 });
+
+    if (reqContext === "supervisor" && (payload as any).roles.includes("SUPERVISOR")) {
+      if (contacto.ministerio?.name.includes("Distrito")) isAuthorized = true;
+    } else {
+      const isLider = await prisma.ministerio.findFirst({
+        where: {
+          id: contacto.ministerioId,
+          lideresActivos: { some: { id: (payload as any).id as string } },
+          name: { not: { contains: "Distrito" } }
+        }
+      });
+      if (isLider) isAuthorized = true;
+    }
+
+    if (!isAuthorized) return NextResponse.json({ message: "No tienes permiso para eliminar este contacto" }, { status: 403 });
 
     await prisma.directorioLocal.update({
       where: { id },

@@ -43,7 +43,7 @@ export default function DirectorioLocalPage() {
 
     // NOTA: Como en middleware el /api/admin está protegido, necesitamos hacer endpoints para lider
     // o incluir los catálogos en el payload del GET directorio.
-    const resDir = await fetch("/api/lider/directorio");
+    const resDir = await fetch("/api/lider/directorio?context=lider");
 
     // Obtenemos los ministerios del lider para el select
     const resMin = await fetch("/api/lider/ministerios?context=lider");
@@ -102,7 +102,7 @@ export default function DirectorioLocalPage() {
     }
 
     const payload = { name, phone, roleLocal, iglesiaId, ministerioId, isActive };
-    const url = editId ? `/api/lider/directorio/${editId}` : "/api/lider/directorio";
+    const url = editId ? `/api/lider/directorio/${editId}?context=lider` : "/api/lider/directorio?context=lider";
     const method = editId ? "PUT" : "POST";
 
     const res = await fetch(url, {
@@ -141,7 +141,7 @@ export default function DirectorioLocalPage() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("¿Desactivar este contacto del directorio local?")) return;
-    await fetch(`/api/lider/directorio/${id}`, { method: "DELETE" });
+    await fetch(`/api/lider/directorio/${id}?context=lider`, { method: "DELETE" });
     fetchData();
   };
 

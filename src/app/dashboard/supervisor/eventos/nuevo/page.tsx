@@ -29,7 +29,7 @@ export default function NuevoEventoPage() {
 
   useEffect(() => {
     const fetchMinisterios = async () => {
-      const res = await fetch("/api/lider/ministerios?context=supervisor&");
+      const res = await fetch("/api/lider/ministerios?context=supervisor");
       if (res.ok) {
         const data = await res.json();
         setMinisterios(data);
@@ -167,23 +167,24 @@ export default function NuevoEventoPage() {
               </div>
             </div>
 
-            {/* Ministerio */}
+            {/* Ministerio - Sólo lectura para Supervisor (asume su ministerio global) */}
             <div className="sm:col-span-3">
-              <label htmlFor="ministerioId" className="block text-sm font-medium leading-6 text-gray-900">
-                Ministerio <span className="text-red-500">*</span>
+              <label htmlFor="ministerioId" className="block text-sm font-medium leading-6 text-gray-500">
+                Organizador del Evento
               </label>
               <div className="mt-2">
                 <select
                   id="ministerioId"
                   name="ministerioId"
                   required
+                  disabled
                   value={formData.ministerioId}
-                  onChange={handleChange}
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                  className="block w-full rounded-md border-0 py-1.5 bg-gray-50 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
                 >
                   {ministerios.map((min) => (
                     <option key={min.id} value={min.id}>{min.name}</option>
                   ))}
+                  {ministerios.length === 0 && <option value="">Cargando distrito...</option>}
                 </select>
               </div>
             </div>

@@ -40,7 +40,7 @@ export default function DirectorioLocalPage() {
   const fetchData = async () => {
     setLoading(true);
     const [resDir, resLid] = await Promise.all([
-      fetch("/api/lider/directorio"),
+      fetch("/api/lider/directorio?context=supervisor"),
       fetch("/api/supervisor/lideres")
     ]);
 
@@ -49,7 +49,7 @@ export default function DirectorioLocalPage() {
     }
 
     // Obtenemos los ministerios del lider para el select
-    const resMin = await fetch("/api/lider/ministerios?context=supervisor&");
+    const resMin = await fetch("/api/lider/ministerios?context=supervisor");
 
     if (resDir.ok) setDirectorio(await resDir.json());
     if (resMin.ok) {
@@ -105,7 +105,7 @@ export default function DirectorioLocalPage() {
     }
 
     const payload = { name, phone, roleLocal, iglesiaId, ministerioId, isActive };
-    const url = editId ? `/api/lider/directorio/${editId}` : "/api/lider/directorio";
+    const url = editId ? `/api/lider/directorio/${editId}?context=supervisor` : "/api/lider/directorio?context=supervisor";
     const method = editId ? "PUT" : "POST";
 
     const res = await fetch(url, {
@@ -144,7 +144,7 @@ export default function DirectorioLocalPage() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("¿Desactivar este contacto del directorio local?")) return;
-    await fetch(`/api/lider/directorio/${id}`, { method: "DELETE" });
+    await fetch(`/api/lider/directorio/${id}?context=supervisor`, { method: "DELETE" });
     fetchData();
   };
 

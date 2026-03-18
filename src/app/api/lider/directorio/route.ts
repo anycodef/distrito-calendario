@@ -12,10 +12,22 @@ export async function GET(req: NextRequest) {
   if (!payload) return NextResponse.json({ message: "No autorizado" }, { status: 401 });
 
   try {
-    // El Supervisor también gestiona SOLO su propia agenda/directorio
-    // (Ej. su secretaria, tesorero, pastores, miembros de su directiva distrital)
+    const url = new URL(req.url);
+    const context = url.searchParams.get("context");
+
+    let whereClause: any = {};
+
+    if (context === "supervisor" && (payload as any).roles.includes("SUPERVISOR")) {
+      whereClause.ministerio = { name: { contains: "Distrito" } };
+    } else {
+      whereClause.ministerio = {
+         lideresActivos: { some: { id: (payload as any).id as string } },
+         name: { not: { contains: "Distrito" } }
+      };
+    }
+
     const directorio = await prisma.directorioLocal.findMany({
-      where: { liderId: payload.id as string },
+      where: whereClause,
       include: {
         iglesia: true,
         ministerio: { select: { id: true, name: true, color: true } }
@@ -41,15 +53,28 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: "Campos requeridos faltantes" }, { status: 400 });
     }
 
-    // Validar que el ministerio seleccionado pertenezca a este líder
-    const authMin = await prisma.ministerio.findFirst({
-      where: {
-        id: ministerioId,
-        lideresActivos: { some: { id: payload.id as string } }
-      }
-    });
+    const url = new URL(req.url);
+    const context = url.searchParams.get("context");
 
-    if (!authMin) return NextResponse.json({ message: "No tienes permiso en este ministerio" }, { status: 403 });
+    let isAuthorized = false;
+
+    if (context === "supervisor") {
+      const authMin = await prisma.ministerio.findFirst({
+        where: { id: ministerioId, name: { contains: "Distrito" } }
+      });
+      if (authMin && (payload as any).roles.includes("SUPERVISOR")) isAuthorized = true;
+    } else {
+      const authMin = await prisma.ministerio.findFirst({
+        where: {
+          id: ministerioId,
+          lideresActivos: { some: { id: (payload as any).id as string } },
+          name: { not: { contains: "Distrito" } }
+        }
+      });
+      if (authMin) isAuthorized = true;
+    }
+
+    if (!isAuthorized) return NextResponse.json({ message: "No tienes permiso en este ministerio" }, { status: 403 });
 
     const contacto = await prisma.directorioLocal.create({
       data: {

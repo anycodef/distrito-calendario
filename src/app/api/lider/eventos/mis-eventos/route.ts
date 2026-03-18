@@ -20,12 +20,15 @@ export async function GET(request: NextRequest) {
     };
 
     if (context === "supervisor" && (payload as any).roles.includes("SUPERVISOR")) {
-      // El supervisor gestiona eventos del ministerio Distrito
+      // El supervisor gestiona eventos del ministerio Distrito (independientemente de qué usuario/supervisor lo creó)
       whereClause.ministerio = { name: { contains: "Distrito" } };
     } else {
-      // El lider gestiona eventos creados por él, excluyendo los del distrito para que no se crucen.
-      whereClause.creatorId = (payload as any).id as string;
-      whereClause.ministerio = { name: { not: { contains: "Distrito" } } };
+      // El lider gestiona eventos que pertenecen a los ministerios que él lidera actualmente.
+      // (La identidad del evento está atada al Ministerio, no al usuario que lo creó).
+      whereClause.ministerio = {
+         lideresActivos: { some: { id: (payload as any).id as string } },
+         name: { not: { contains: "Distrito" } }
+      };
     }
 
     if (status) {

@@ -29,13 +29,19 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     if ((payload as any).roles.includes("ADMIN")) {
         isAuthorized = true;
     }
-    // Creador original puede editar su propio evento (usado por líderes)
-    else if (eventoToUpdate.creatorId === (payload as any).id as string) {
-        isAuthorized = true;
-    }
     // Si el evento es del Distrito, CUALQUIER SUPERVISOR puede editarlo
     else if (eventoToUpdate.ministerio?.name.includes("Distrito") && (payload as any).roles.includes("SUPERVISOR")) {
         isAuthorized = true;
+    }
+    // O si el usuario activo actualmente lidera el ministerio al que pertenece este evento
+    else {
+        const isLider = await prisma.ministerio.findFirst({
+            where: {
+                id: eventoToUpdate.ministerioId,
+                lideresActivos: { some: { id: (payload as any).id as string } }
+            }
+        });
+        if (isLider) isAuthorized = true;
     }
 
     if (!isAuthorized) {
@@ -95,13 +101,19 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     if ((payload as any).roles.includes("ADMIN")) {
         isAuthorized = true;
     }
-    // Creador original puede borrar (lider)
-    else if (eventoToDelete.creatorId === (payload as any).id as string) {
-        isAuthorized = true;
-    }
     // Supervisor puede borrar eventos de Distrito
     else if (eventoToDelete.ministerio?.name.includes("Distrito") && (payload as any).roles.includes("SUPERVISOR")) {
         isAuthorized = true;
+    }
+    // O si el usuario actualmente lidera el ministerio del evento
+    else {
+        const isLider = await prisma.ministerio.findFirst({
+            where: {
+                id: eventoToDelete.ministerioId,
+                lideresActivos: { some: { id: (payload as any).id as string } }
+            }
+        });
+        if (isLider) isAuthorized = true;
     }
 
     if (!isAuthorized) {

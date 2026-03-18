@@ -51,22 +51,29 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     const body = await request.json();
     let { title, ministerioId, startDate, endDate, location, mapLink, publicDescription, privateNotes, status, visibility } = body;
 
-    if (ministerioId === "global-distrito-id") {
-      // Find or create the Distrito ministry to get a valid UUID
-      let distritoMin = await prisma.ministerio.findFirst({
+    // Verify the provided ministerioId physically exists in the database
+    let dbMinisterio = await prisma.ministerio.findUnique({
+      where: { id: ministerioId }
+    });
+
+    // If it doesn't exist (e.g., the mock ID 'global-distrito-id' or a stale ID),
+    // dynamically resolve to the actual "Distrito" ministry or create it.
+    if (!dbMinisterio) {
+      let cat = await prisma.categoriaMinisterio.findFirst({
+        where: { name: "Organización General" }
+      });
+      if (!cat) {
+        cat = await prisma.categoriaMinisterio.create({
+          data: { name: "Organización General" }
+        });
+      }
+
+      dbMinisterio = await prisma.ministerio.findFirst({
         where: { name: { contains: "Distrito" } }
       });
-      if (!distritoMin) {
-        // Ensure an "Organización General" category exists or find it
-        let cat = await prisma.categoriaMinisterio.findFirst({
-          where: { name: "Organización General" }
-        });
-        if (!cat) {
-          cat = await prisma.categoriaMinisterio.create({
-            data: { name: "Organización General" }
-          });
-        }
-        distritoMin = await prisma.ministerio.create({
+
+      if (!dbMinisterio) {
+        dbMinisterio = await prisma.ministerio.create({
           data: {
             name: "Distrito 3 (General)",
             color: "#1e40af", // blue-800
@@ -74,7 +81,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
           }
         });
       }
-      ministerioId = distritoMin.id;
+      ministerioId = dbMinisterio.id;
     }
 
     const updatedEvento = await prisma.evento.update({

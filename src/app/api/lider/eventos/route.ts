@@ -53,22 +53,29 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Faltan campos obligatorios" }, { status: 400 });
     }
 
-    if (ministerioId === "global-distrito-id") {
-      // Find or create the Distrito ministry to get a valid UUID
-      let distritoMin = await prisma.ministerio.findFirst({
+    // Verify the provided ministerioId physically exists in the database
+    let dbMinisterio = await prisma.ministerio.findUnique({
+      where: { id: ministerioId }
+    });
+
+    // If it doesn't exist (e.g., the mock ID 'global-distrito-id' or a stale ID),
+    // dynamically resolve to the actual "Distrito" ministry or create it.
+    if (!dbMinisterio) {
+      let cat = await prisma.categoriaMinisterio.findFirst({
+        where: { name: "Organización General" }
+      });
+      if (!cat) {
+        cat = await prisma.categoriaMinisterio.create({
+          data: { name: "Organización General" }
+        });
+      }
+
+      dbMinisterio = await prisma.ministerio.findFirst({
         where: { name: { contains: "Distrito" } }
       });
-      if (!distritoMin) {
-        // Ensure an "Organización General" category exists or find it
-        let cat = await prisma.categoriaMinisterio.findFirst({
-          where: { name: "Organización General" }
-        });
-        if (!cat) {
-          cat = await prisma.categoriaMinisterio.create({
-            data: { name: "Organización General" }
-          });
-        }
-        distritoMin = await prisma.ministerio.create({
+
+      if (!dbMinisterio) {
+        dbMinisterio = await prisma.ministerio.create({
           data: {
             name: "Distrito 3 (General)",
             color: "#1e40af", // blue-800
@@ -76,11 +83,11 @@ export async function POST(request: NextRequest) {
           }
         });
       }
-      ministerioId = distritoMin.id;
+      ministerioId = dbMinisterio.id;
     }
 
-    // Verificar que el usuario tenga asignado el ministerio o sea supervisor del ministerio
-    const ministerio = await prisma.ministerio.findFirst({
+    // Check permissions
+    const isLider = await prisma.ministerio.findFirst({
         where: {
             id: ministerioId,
             lideresActivos: {
@@ -89,10 +96,7 @@ export async function POST(request: NextRequest) {
         }
     });
 
-    if (!ministerio && !(payload as any).roles.includes("SUPERVISOR")) {
-        // En un caso real el Supervisor podría tener acceso a todo si se configuran así los permisos,
-        // pero por ahora el supervisor debe tener asignado el ministerio "Distrito 3" explícitamente.
-        // Asumiendo que el requerimiento es que el usuario debe ser líder activo de ese ministerio:
+    if (!isLider && !(payload as any).roles.includes("SUPERVISOR")) {
         return NextResponse.json({ error: "No tienes permiso para crear eventos en este ministerio" }, { status: 403 });
     }
 

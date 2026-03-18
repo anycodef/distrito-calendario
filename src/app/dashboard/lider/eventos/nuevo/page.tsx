@@ -181,24 +181,31 @@ export default function NuevoEventoPage() {
               </div>
             </div>
 
-            {/* Ministerio */}
+            {/* Organizador / Ministerio */}
             <div className="sm:col-span-3">
               <label htmlFor="ministerioId" className="block text-sm font-medium leading-6 text-gray-900">
-                Ministerio <span className="text-red-500">*</span>
+                Organizador del Evento <span className="text-red-500">*</span>
               </label>
               <div className="mt-2">
-                <select
-                  id="ministerioId"
-                  name="ministerioId"
-                  required
-                  value={formData.ministerioId}
-                  onChange={handleChange}
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
-                >
-                  {ministerios.map((min) => (
-                    <option key={min.id} value={min.id}>{min.name}</option>
-                  ))}
-                </select>
+                {ministerios.length === 1 ? (
+                  <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm font-medium text-gray-800">
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: ministerios[0].color || '#3b82f6' }}></div>
+                    {ministerios[0].name}
+                  </div>
+                ) : (
+                  <select
+                    id="ministerioId"
+                    name="ministerioId"
+                    required
+                    value={formData.ministerioId}
+                    onChange={handleChange}
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                  >
+                    {ministerios.map((min) => (
+                      <option key={min.id} value={min.id}>{min.name}</option>
+                    ))}
+                  </select>
+                )}
               </div>
             </div>
 

@@ -181,8 +181,16 @@ export default function NuevoEventoPage() {
               </div>
             </div>
 
-            {/* El selector de Ministerio está oculto para el supervisor ya que se deduce de la API que
-                representa al "Distrito", pero lo mantenemos visualmente nulo para simplificar el UI */}
+            {/* Organizador - Estático para el Supervisor */}
+            <div className="sm:col-span-3">
+              <label className="block text-sm font-medium leading-6 text-gray-700">
+                Organizador del Evento <span className="text-red-500">*</span>
+              </label>
+              <div className="mt-2 flex items-center gap-2 px-3 py-2 bg-blue-50 border border-blue-200 rounded-md text-sm font-medium text-blue-800">
+                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#1e40af' }}></div>
+                {ministerios.length > 0 ? ministerios[0].name : "Distrito"}
+              </div>
+            </div>
 
             {/* Visibilidad */}
             <div className="sm:col-span-6">

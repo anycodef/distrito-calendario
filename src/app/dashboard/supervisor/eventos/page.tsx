@@ -9,6 +9,7 @@ import Link from "next/link";
 export default function MisEventosPage() {
   const [activeTab, setActiveTab] = useState<"PUBLISHED" | "DRAFT">("PUBLISHED");
   const [eventos, setEventos] = useState<any[]>([]);
+  const [draftCount, setDraftCount] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState<"ALL" | "UPCOMING" | "PAST">("UPCOMING");
@@ -16,24 +17,33 @@ export default function MisEventosPage() {
   const [eventToPublish, setEventToPublish] = useState<any | null>(null);
   const [eventToDelete, setEventToDelete] = useState<any | null>(null);
 
-  const fetchEventos = async () => {
+  const fetchEventosAndCount = async () => {
     setLoading(true);
     setEventos([]); // Limpiamos la lista temporal
     try {
-      const res = await fetch(`/api/lider/eventos/mis-eventos?context=supervisor&status=${activeTab}`);
-      if (res.ok) {
-        const data = await res.json();
+      const [resActive, resDraft] = await Promise.all([
+        fetch(`/api/lider/eventos/mis-eventos?context=supervisor&status=${activeTab}`),
+        fetch(`/api/lider/eventos/mis-eventos?context=supervisor&status=DRAFT`)
+      ]);
+
+      if (resActive.ok) {
+        const data = await resActive.json();
         setEventos(data);
       }
+
+      if (resDraft.ok) {
+        const draftData = await resDraft.json();
+        setDraftCount(draftData.length);
+      }
     } catch (error) {
-      console.error("Error fetching mis eventos:", error);
+      console.error("Error fetching eventos:", error);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchEventos();
+    fetchEventosAndCount();
   }, [activeTab]);
 
   const handleDeleteConfirm = async () => {
@@ -43,6 +53,7 @@ export default function MisEventosPage() {
       const res = await fetch(`/api/lider/eventos/${eventToDelete.id}`, { method: "DELETE" });
       if (res.ok) {
         setEventos(eventos.filter(ev => ev.id !== eventToDelete.id));
+        if (activeTab === "DRAFT" && draftCount !== null) setDraftCount(draftCount - 1);
       } else {
         alert("Error al eliminar el evento");
       }
@@ -67,6 +78,7 @@ export default function MisEventosPage() {
       });
       if (res.ok) {
         setEventos(eventos.filter(e => e.id !== eventToPublish.id));
+        if (activeTab === "DRAFT" && draftCount !== null) setDraftCount(draftCount - 1);
       } else {
         alert("Error al publicar el evento");
       }
@@ -136,7 +148,7 @@ export default function MisEventosPage() {
                   : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 hover:bg-gray-50"
               } w-1/2 flex items-center justify-center border-b-2 py-4 px-1 text-center text-sm font-medium transition-colors`}
             >
-              Borradores {!loading && activeTab === "DRAFT" ? `(${eventos.length})` : loading && activeTab === "DRAFT" ? "(...)" : ""}
+              Borradores {draftCount !== null ? `(${draftCount})` : ""}
             </button>
           </nav>
         </div>

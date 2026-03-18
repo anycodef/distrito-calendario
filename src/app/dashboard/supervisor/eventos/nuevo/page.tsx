@@ -181,30 +181,11 @@ export default function NuevoEventoPage() {
               </div>
             </div>
 
-            {/* Ministerio - Sólo lectura para Supervisor (asume su ministerio global) */}
-            <div className="sm:col-span-3">
-              <label className="block text-sm font-medium leading-6 text-gray-700">
-                Organizador del Evento <span className="text-red-500">*</span>
-              </label>
-              <div className="mt-2">
-                {ministerios.length === 0 ? (
-                  <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-500">
-                    <span className="animate-spin border-2 border-gray-400 border-t-transparent rounded-full w-4 h-4"></span>
-                    Cargando entidad...
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2 px-3 py-2 bg-blue-50 border border-blue-200 rounded-md text-sm font-medium text-blue-800">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: ministerios[0]?.color || '#3b82f6' }}></div>
-                    {ministerios[0].name}
-                  </div>
-                )}
-                {/* Input oculto para enviar el ID correctamente si es necesario en lógica tradicional,
-                    aunque manejamos payload manualmente */}
-              </div>
-            </div>
+            {/* El selector de Ministerio está oculto para el supervisor ya que se deduce de la API que
+                representa al "Distrito", pero lo mantenemos visualmente nulo para simplificar el UI */}
 
             {/* Visibilidad */}
-            <div className="sm:col-span-3">
+            <div className="sm:col-span-6">
               <label htmlFor="visibility" className="block text-sm font-medium leading-6 text-gray-900">
                 Visibilidad
               </label>

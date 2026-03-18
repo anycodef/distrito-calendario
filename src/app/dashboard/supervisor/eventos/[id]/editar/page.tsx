@@ -19,6 +19,7 @@ export default function EditarEventoPage({ params }: { params: Promise<{ id: str
   const [showConflictsModal, setShowConflictsModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDraftModal, setShowDraftModal] = useState(false);
+  const [formError, setFormError] = useState("");
 
   const [formData, setFormData] = useState({
     title: "",
@@ -151,10 +152,17 @@ export default function EditarEventoPage({ params }: { params: Promise<{ id: str
 
   const handleSubmit = async (e: React.FormEvent, newStatus: "PUBLISHED" | "DRAFT") => {
     e.preventDefault();
+    setFormError("");
     setSaving(true);
 
+    if (!formData.title || !formData.ministerioId || !formData.startDate || !formData.endDate) {
+      setFormError("Por favor completa todos los campos obligatorios (*). El organizador debe estar cargado.");
+      setSaving(false);
+      return;
+    }
+
     if (new Date(formData.endDate) <= new Date(formData.startDate)) {
-        alert("La fecha de fin debe ser posterior a la fecha de inicio.");
+        setFormError("La fecha de fin debe ser posterior a la fecha de inicio.");
         setSaving(false);
         return;
     }
@@ -178,11 +186,11 @@ export default function EditarEventoPage({ params }: { params: Promise<{ id: str
         router.refresh();
       } else {
         const err = await res.json();
-        alert(err.error || "Error al actualizar el evento");
+        setFormError(err.error || "Error al actualizar el evento");
       }
     } catch (error) {
       console.error(error);
-      alert("Ocurrió un error inesperado");
+      setFormError("Ocurrió un error de red inesperado.");
     } finally {
       setSaving(false);
     }
@@ -215,6 +223,12 @@ export default function EditarEventoPage({ params }: { params: Promise<{ id: str
 
       <div className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
         <form className="px-4 py-6 sm:p-8">
+          {formError && (
+             <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 text-sm rounded-md font-medium">
+               {formError}
+             </div>
+          )}
+
           <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
 
             {/* Título */}
@@ -235,30 +249,11 @@ export default function EditarEventoPage({ params }: { params: Promise<{ id: str
               </div>
             </div>
 
-            {/* Ministerio - Sólo lectura para Supervisor (asume su ministerio global) */}
-            <div className="sm:col-span-3">
-              <label htmlFor="ministerioId" className="block text-sm font-medium leading-6 text-gray-500">
-                Organizador del Evento
-              </label>
-              <div className="mt-2">
-                <select
-                  id="ministerioId"
-                  name="ministerioId"
-                  required
-                  disabled
-                  value={formData.ministerioId}
-                  className="block w-full rounded-md border-0 py-1.5 bg-gray-50 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
-                >
-                  {ministerios.map((min) => (
-                    <option key={min.id} value={min.id}>{min.name}</option>
-                  ))}
-                  {ministerios.length === 0 && <option value="">Cargando distrito...</option>}
-                </select>
-              </div>
-            </div>
+            {/* El selector de Ministerio está oculto para el supervisor ya que se deduce de la API que
+                representa al "Distrito", pero lo mantenemos visualmente nulo para simplificar el UI */}
 
             {/* Visibilidad */}
-            <div className="sm:col-span-3">
+            <div className="sm:col-span-6">
               <label htmlFor="visibility" className="block text-sm font-medium leading-6 text-gray-900">
                 Visibilidad
               </label>

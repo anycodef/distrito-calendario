@@ -18,13 +18,15 @@ export async function GET(req: NextRequest) {
     let whereClause: any = {};
 
     if (context === "supervisor") {
-      // El supervisor gestiona el ministerio global, asumimos nombre especial "Distrito" o "Global"
-      // En un caso robusto, habría un flag 'isDistrito: true', aquí usaremos nombre por convención.
-      whereClause.name = { contains: "Distrito" };
-    } else {
-      // Si es LIDER o no especificó contexto, ve solo los ministerios a su cargo.
+      // El supervisor gestiona el ministerio global.
+      // Como no hay flag nativo, buscamos "Distrito" u "Organización General", o el ministerio sin categoria
+      // Lo más genérico: aquellos asignados a él y que representen el distrito (al ser Multi-Rol,
+      // asumimos que el admin le asignó el ministerio principal).
       whereClause.lideresActivos = { some: { id: payload.id as string } };
-      // Excluir el de distrito si lo tuviera asignado por error o cruce
+    } else {
+      // Si es LIDER, ve solo los ministerios a su cargo (para los cuales fue designado).
+      whereClause.lideresActivos = { some: { id: payload.id as string } };
+      // Opcional: si existe "Distrito", se excluye de su panel normal de Líder.
       whereClause.name = { not: { contains: "Distrito" } };
     }
 
@@ -53,15 +55,13 @@ export async function PUT(req: NextRequest) {
     let isAuthorized = false;
 
     if (context === "supervisor") {
-      // Si está en contexto supervisor, y el ministerio es el de Distrito, autorizar.
       const authMin = await prisma.ministerio.findFirst({
-        where: { id, name: { contains: "Distrito" } }
+        where: { id, lideresActivos: { some: { id: payload.id as string } } }
       });
       if (authMin && (payload as any).roles.includes("SUPERVISOR")) {
         isAuthorized = true;
       }
     } else {
-      // Verificamos si este líder está realmente a cargo de este ministerio
       const authMin = await prisma.ministerio.findFirst({
         where: {
           id,

@@ -22,9 +22,10 @@ export default function MisEventosPage() {
     setEventos([]); // Limpiamos la lista para evitar flash
     try {
       // Obtenemos tanto la lista de la pestaña activa como el conteo de borradores
+      const ts = Date.now();
       const [resActive, resDraft] = await Promise.all([
-        fetch(`/api/lider/eventos/mis-eventos?context=lider&status=${activeTab}`),
-        fetch(`/api/lider/eventos/mis-eventos?context=lider&status=DRAFT`)
+        fetch(`/api/lider/eventos/mis-eventos?context=lider&status=${activeTab}&_t=${ts}`, { cache: "no-store" }),
+        fetch(`/api/lider/eventos/mis-eventos?context=lider&status=DRAFT&_t=${ts}`, { cache: "no-store" })
       ]);
 
       if (resActive.ok) {

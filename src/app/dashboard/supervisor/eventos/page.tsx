@@ -21,9 +21,10 @@ export default function MisEventosPage() {
     setLoading(true);
     setEventos([]); // Limpiamos la lista temporal
     try {
+      const ts = Date.now();
       const [resActive, resDraft] = await Promise.all([
-        fetch(`/api/lider/eventos/mis-eventos?context=supervisor&status=${activeTab}`),
-        fetch(`/api/lider/eventos/mis-eventos?context=supervisor&status=DRAFT`)
+        fetch(`/api/lider/eventos/mis-eventos?context=supervisor&status=${activeTab}&_t=${ts}`, { cache: "no-store" }),
+        fetch(`/api/lider/eventos/mis-eventos?context=supervisor&status=DRAFT&_t=${ts}`, { cache: "no-store" })
       ]);
 
       if (resActive.ok) {

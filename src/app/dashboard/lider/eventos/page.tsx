@@ -19,7 +19,7 @@ export default function MisEventosPage() {
   const fetchEventos = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/lider/eventos/mis-eventos?context=lider&?status=${activeTab}`);
+      const res = await fetch(`/api/lider/eventos/mis-eventos?context=lider&status=${activeTab}`);
       if (res.ok) {
         const data = await res.json();
         setEventos(data);

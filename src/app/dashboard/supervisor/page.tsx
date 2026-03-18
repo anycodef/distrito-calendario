@@ -23,7 +23,8 @@ export default function SupervisorDashboardPage() {
 
         if (resMe.ok) {
           const userData = await resMe.json();
-          setUserName(userData.name || "Supervisor");
+          const firstName = userData.name ? userData.name.split(" ")[0] : "Supervisor";
+          setUserName(firstName);
         }
 
         if (resEvt.ok) {

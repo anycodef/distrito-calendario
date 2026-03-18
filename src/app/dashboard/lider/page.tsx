@@ -22,7 +22,8 @@ export default function LiderDashboardPage() {
 
         if (resMe.ok) {
           const userData = await resMe.json();
-          setUserName(userData.name || "Líder");
+          const firstName = userData.name ? userData.name.split(" ")[0] : "Líder";
+          setUserName(firstName);
         }
 
         if (resMin.ok) {

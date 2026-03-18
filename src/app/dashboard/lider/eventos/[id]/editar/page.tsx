@@ -379,7 +379,7 @@ export default function EditarEventoPage({ params }: { params: Promise<{ id: str
 
             <div className="sm:col-span-3">
               <label htmlFor="mapLink" className="block text-sm font-medium leading-6 text-gray-900">
-                Enlace a Google Maps
+                Enlace de ubicación (Google Maps)
               </label>
               <div className="mt-2">
                 <input

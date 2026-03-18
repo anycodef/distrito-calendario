@@ -9,14 +9,21 @@ export default function LiderDashboardPage() {
   const [ministerios, setMinisterios] = useState<any[]>([]);
   const [eventos, setEventos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [userName, setUserName] = useState<string>("");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [resMin, resEvt] = await Promise.all([
+        const [resMin, resEvt, resMe] = await Promise.all([
           fetch("/api/lider/ministerios?context=lider"),
-          fetch("/api/lider/eventos/mis-eventos?context=lider&status=PUBLISHED")
+          fetch("/api/lider/eventos/mis-eventos?context=lider&status=PUBLISHED"),
+          fetch("/api/auth/me")
         ]);
+
+        if (resMe.ok) {
+          const userData = await resMe.json();
+          setUserName(userData.name || "Líder");
+        }
 
         if (resMin.ok) {
           const data = await resMin.json();
@@ -44,10 +51,10 @@ export default function LiderDashboardPage() {
     <div className="space-y-6">
       <div className="border-b border-gray-200 pb-5">
         <h3 className="text-2xl font-semibold leading-6 text-gray-900">
-          Hola, bienvenido
+          Dios te bendiga, {userName || "bienvenido"}
         </h3>
         <p className="mt-2 max-w-4xl text-sm text-gray-500">
-          Desde este panel puedes gestionar el calendario y los contactos de tus ministerios asignados.
+          Desde este panel, tu espacio principal de trabajo, puedes gestionar el calendario y la lista de contactos de los ministerios que lideras.
         </p>
       </div>
 

@@ -326,7 +326,7 @@ export default function NuevoEventoPage() {
 
             <div className="sm:col-span-3">
               <label htmlFor="mapLink" className="block text-sm font-medium leading-6 text-gray-900">
-                Enlace a Google Maps (Opcional)
+                Enlace de ubicación (Google Maps) (Opcional)
               </label>
               <div className="mt-2">
                 <input
@@ -346,7 +346,7 @@ export default function NuevoEventoPage() {
               <label htmlFor="publicDescription" className="block text-sm font-medium leading-6 text-gray-900 flex items-center gap-1">
                 <AlignLeft className="w-4 h-4 text-gray-400" /> Descripción Pública
               </label>
-              <p className="text-xs text-gray-500 mb-2">Visible para todos en el calendario distrital y landing page (si el evento es público).</p>
+              <p className="text-xs text-gray-500 mb-2">Visible para todos en el calendario distrital y página principal (si el evento es público).</p>
               <textarea
                 id="publicDescription"
                 name="publicDescription"

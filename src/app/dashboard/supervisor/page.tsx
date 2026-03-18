@@ -9,15 +9,22 @@ export default function SupervisorDashboardPage() {
   const [stats, setStats] = useState({ ministerios: 0, iglesias: 0, lideresLocales: 0 });
   const [eventos, setEventos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [userName, setUserName] = useState<string>("");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [resEvt, resMin, resIgl] = await Promise.all([
+        const [resEvt, resMin, resIgl, resMe] = await Promise.all([
           fetch("/api/lider/eventos"), // El endpoint principal devuelve todos los publicados para el calendario
           fetch("/api/admin/ministerios").catch(() => null), // Hack: El admin/ministerios capaz falla si no tiene rol ADMIN, así que usaremos uno propio si es necesario, o lo contamos del backend.
-          fetch("/api/lider/iglesias")
+          fetch("/api/lider/iglesias"),
+          fetch("/api/auth/me")
         ]);
+
+        if (resMe.ok) {
+          const userData = await resMe.json();
+          setUserName(userData.name || "Supervisor");
+        }
 
         if (resEvt.ok) {
           const dataEvt = await resEvt.json();
@@ -55,10 +62,10 @@ export default function SupervisorDashboardPage() {
     <div className="space-y-6">
       <div className="border-b border-gray-200 pb-5">
         <h3 className="text-2xl font-semibold leading-6 text-gray-900">
-          Hola, Supervisor
+          Dios te bendiga, {userName || "Supervisor"}
         </h3>
         <p className="mt-2 max-w-4xl text-sm text-gray-500">
-          Desde este panel puedes supervisar todas las actividades de los ministerios y la agenda general del Distrito 3.
+          Desde este espacio principal puedes supervisar todas las actividades de los ministerios y la agenda general del Distrito 3.
         </p>
       </div>
 

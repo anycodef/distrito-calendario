@@ -15,7 +15,7 @@ export default function LiderDashboardPage() {
       try {
         const [resMin, resEvt] = await Promise.all([
           fetch("/api/lider/ministerios?context=lider"),
-          fetch("/api/lider/eventos/mis-eventos?context=lider&?status=PUBLISHED")
+          fetch("/api/lider/eventos/mis-eventos?context=lider&status=PUBLISHED")
         ]);
 
         if (resMin.ok) {
@@ -36,7 +36,8 @@ export default function LiderDashboardPage() {
   }, []);
 
   const proximosEventos = eventos
-    .filter(ev => isAfter(new Date(ev.startDate), new Date()) || isBefore(new Date(ev.endDate), addDays(new Date(), 1)))
+    .filter(ev => isAfter(new Date(ev.endDate || ev.startDate), new Date()))
+    .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
     .slice(0, 3);
 
   return (

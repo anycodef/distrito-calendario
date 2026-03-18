@@ -48,6 +48,7 @@ export default function SupervisorDashboardPage() {
 
   const proximosEventos = eventos
     .filter(ev => isAfter(new Date(ev.endDate || ev.startDate), new Date()))
+    .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
     .slice(0, 4);
 
   return (

@@ -47,10 +47,36 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { title, ministerioId, startDate, endDate, location, mapLink, publicDescription, privateNotes, status, visibility } = body;
+    let { title, ministerioId, startDate, endDate, location, mapLink, publicDescription, privateNotes, status, visibility } = body;
 
     if (!title || !ministerioId || !startDate || !endDate) {
       return NextResponse.json({ error: "Faltan campos obligatorios" }, { status: 400 });
+    }
+
+    if (ministerioId === "global-distrito-id") {
+      // Find or create the Distrito ministry to get a valid UUID
+      let distritoMin = await prisma.ministerio.findFirst({
+        where: { name: { contains: "Distrito" } }
+      });
+      if (!distritoMin) {
+        // Ensure an "Organización General" category exists or find it
+        let cat = await prisma.categoriaMinisterio.findFirst({
+          where: { name: "Organización General" }
+        });
+        if (!cat) {
+          cat = await prisma.categoriaMinisterio.create({
+            data: { name: "Organización General" }
+          });
+        }
+        distritoMin = await prisma.ministerio.create({
+          data: {
+            name: "Distrito 3 (General)",
+            color: "#1e40af", // blue-800
+            categoriaId: cat.id
+          }
+        });
+      }
+      ministerioId = distritoMin.id;
     }
 
     // Verificar que el usuario tenga asignado el ministerio o sea supervisor del ministerio

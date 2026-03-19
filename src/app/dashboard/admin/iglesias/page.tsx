@@ -14,6 +14,7 @@ export default function IglesiasAdminPage() {
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState("");
   const [editId, setEditId] = useState<string | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const fetchIglesias = async () => {
     setLoading(true);
@@ -50,9 +51,10 @@ export default function IglesiasAdminPage() {
     fetchIglesias();
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("¿Estás seguro de eliminar esta iglesia permanentemente?")) return;
-    await fetch(`/api/admin/iglesias/${id}`, { method: "DELETE" });
+  const handleDeleteConfirm = async () => {
+    if (!deleteId) return;
+    await fetch(`/api/admin/iglesias/${deleteId}`, { method: "DELETE" });
+    setDeleteId(null);
     fetchIglesias();
   };
 
@@ -139,7 +141,7 @@ export default function IglesiasAdminPage() {
                       Editar
                     </button>
                     <button
-                      onClick={() => handleDelete(iglesia.id)}
+                      onClick={() => setDeleteId(iglesia.id)}
                       className="text-red-600 hover:text-red-900"
                     >
                       Eliminar
@@ -158,6 +160,37 @@ export default function IglesiasAdminPage() {
           </table>
         )}
       </div>
+
+      {/* Modal Confirmar Eliminación */}
+      {deleteId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setDeleteId(null)}>
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="bg-red-50 border-b border-red-100 px-6 py-4 flex items-center gap-3">
+              <Trash2 className="h-6 w-6 text-red-500" />
+              <h3 className="text-lg font-bold text-red-900">Eliminar Iglesia</h3>
+            </div>
+            <div className="p-6 space-y-4">
+              <p className="text-sm text-gray-600">
+                ¿Estás seguro de que deseas eliminar esta iglesia permanentemente? Esta acción no se puede deshacer.
+              </p>
+            </div>
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
+              <button
+                onClick={() => setDeleteId(null)}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleDeleteConfirm}
+                className="px-4 py-2 bg-red-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-red-700 flex items-center gap-2"
+              >
+                <Trash2 className="w-4 h-4" /> Sí, Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

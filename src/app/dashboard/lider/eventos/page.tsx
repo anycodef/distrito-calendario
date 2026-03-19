@@ -5,6 +5,7 @@ import { format, isAfter, isBefore, addDays } from "date-fns";
 import { es } from "date-fns/locale";
 import { CalendarRange, Plus, Edit2, Trash2, MapPin, Loader2, Search, CalendarDays, AlignLeft, Lock, Send, AlertTriangle } from "lucide-react";
 import Link from "next/link";
+import { EventDetailModal, EventDetail } from "@/components/EventDetailModal";
 
 export default function MisEventosPage() {
   const [activeTab, setActiveTab] = useState<"PUBLISHED" | "DRAFT">("PUBLISHED");
@@ -13,7 +14,7 @@ export default function MisEventosPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState<"ALL" | "UPCOMING" | "PAST">("UPCOMING");
-  const [selectedEvent, setSelectedEvent] = useState<any | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<EventDetail | null>(null);
   const [eventToPublish, setEventToPublish] = useState<any | null>(null);
   const [eventToDelete, setEventToDelete] = useState<any | null>(null);
 
@@ -211,7 +212,18 @@ export default function MisEventosPage() {
               {filteredEventos.map((ev) => {
                 const isPast = activeTab === 'PUBLISHED' && isBefore(new Date(ev.endDate), now);
                 return (
-                <div key={ev.id} className={`flex flex-col sm:flex-row gap-4 p-4 border rounded-xl transition-shadow hover:shadow-md cursor-pointer ${activeTab === 'DRAFT' ? 'border-amber-200 bg-amber-50/30' : 'border-gray-200 bg-white'} ${isPast ? 'opacity-80 bg-gray-50/50' : ''}`} onClick={() => setSelectedEvent(ev)}>
+                <div key={ev.id} className={`flex flex-col sm:flex-row gap-4 p-4 border rounded-xl transition-shadow hover:shadow-md cursor-pointer ${activeTab === 'DRAFT' ? 'border-amber-200 bg-amber-50/30' : 'border-gray-200 bg-white'} ${isPast ? 'opacity-80 bg-gray-50/50' : ''}`} onClick={() => setSelectedEvent({
+                  title: ev.title,
+                  start: ev.startDate,
+                  end: ev.endDate,
+                  backgroundColor: ev.ministerio?.color || "#3b82f6",
+                  ministerio: ev.ministerio?.name || "",
+                  location: ev.location,
+                  mapLink: ev.mapLink,
+                  publicDescription: ev.publicDescription,
+                  privateNotes: ev.privateNotes,
+                  visibility: ev.visibility
+                })}>
                   <div className={`flex-shrink-0 flex flex-col items-center justify-center w-20 h-20 rounded-lg border shadow-sm self-start ${isPast ? 'bg-gray-200 border-gray-300 text-gray-500' : 'bg-gray-50 border-gray-200 text-gray-900'}`}>
                     <span className={`text-xs font-semibold uppercase ${isPast ? 'text-gray-500' : 'text-gray-500'}`}>{format(new Date(ev.startDate), 'MMM', { locale: es })}</span>
                     <span className={`text-2xl font-bold ${isPast ? 'text-gray-600' : 'text-gray-900'}`}>{format(new Date(ev.startDate), 'dd')}</span>
@@ -267,96 +279,7 @@ export default function MisEventosPage() {
 
       {/* Modal de Detalles del Evento */}
       {selectedEvent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setSelectedEvent(null)}>
-          <div
-            className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Header del Modal con el color del ministerio */}
-            <div
-              className="px-6 py-4 flex items-center justify-between text-white"
-              style={{ backgroundColor: selectedEvent.ministerio?.color || "#3b82f6" }}
-            >
-              <div>
-                <span className="text-xs font-semibold uppercase tracking-wider opacity-90">
-                  {selectedEvent.ministerio?.name}
-                </span>
-                <h3 className="text-xl font-bold mt-1 line-clamp-2">{selectedEvent.title}</h3>
-              </div>
-            </div>
-
-            <div className="p-6 space-y-4">
-              {/* Fechas */}
-              <div className="flex items-start gap-3 text-gray-700">
-                <CalendarDays className="w-5 h-5 text-gray-400 mt-0.5 shrink-0" />
-                <div>
-                  <p className="font-medium text-sm">
-                    {format(new Date(selectedEvent.startDate), "EEEE d 'de' MMMM, yyyy - HH:mm", { locale: es })}
-                  </p>
-                  {selectedEvent.endDate && (
-                    <p className="text-sm text-gray-500">
-                      Hasta: {format(new Date(selectedEvent.endDate), "EEEE d 'de' MMMM, yyyy - HH:mm", { locale: es })}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              {/* Ubicación */}
-              {(selectedEvent.location || selectedEvent.mapLink) && (
-                <div className="flex items-start gap-3 text-gray-700">
-                  <MapPin className="w-5 h-5 text-gray-400 mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-sm">
-                      {selectedEvent.location || "Ubicación sin especificar"}
-                    </p>
-                    {selectedEvent.mapLink && (
-                      <a
-                        href={selectedEvent.mapLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs text-blue-600 hover:underline mt-1 inline-block"
-                      >
-                        Ver en Google Maps
-                      </a>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* Descripción Pública */}
-              {selectedEvent.publicDescription && (
-                <div className="flex items-start gap-3 text-gray-700">
-                  <AlignLeft className="w-5 h-5 text-gray-400 mt-0.5 shrink-0" />
-                  <div className="text-sm whitespace-pre-wrap">
-                    {selectedEvent.publicDescription}
-                  </div>
-                </div>
-              )}
-
-              {/* Notas Privadas */}
-              {selectedEvent.privateNotes && (
-                <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                  <div className="flex items-center gap-2 text-amber-800 font-semibold mb-1">
-                    <Lock className="w-4 h-4" />
-                    <span className="text-xs uppercase tracking-wider">Notas Internas (Privadas)</span>
-                  </div>
-                  <p className="text-sm text-amber-900 whitespace-pre-wrap">
-                    {selectedEvent.privateNotes}
-                  </p>
-                </div>
-              )}
-            </div>
-
-            <div className="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end">
-              <button
-                onClick={() => setSelectedEvent(null)}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-              >
-                Cerrar
-              </button>
-            </div>
-          </div>
-        </div>
+        <EventDetailModal event={selectedEvent} onClose={() => setSelectedEvent(null)} />
       )}
 
       {/* Modal de Confirmación de Publicación */}

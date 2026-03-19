@@ -6,14 +6,13 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import esLocale from "@fullcalendar/core/locales/es";
-import { Loader2, CalendarDays, MapPin, AlignLeft, Lock } from "lucide-react";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
+import { Loader2, CalendarDays } from "lucide-react";
+import { EventDetailModal, EventDetail } from "@/components/EventDetailModal";
 
 export default function CalendarioDistritalPage() {
   const [eventos, setEventos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedEvent, setSelectedEvent] = useState<any | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<EventDetail | null>(null);
 
   useEffect(() => {
     const fetchEventos = async () => {
@@ -50,7 +49,19 @@ export default function CalendarioDistritalPage() {
   }, []);
 
   const handleEventClick = (clickInfo: any) => {
-    setSelectedEvent(clickInfo.event);
+    const { event } = clickInfo;
+    setSelectedEvent({
+      title: event.title,
+      start: event.start,
+      end: event.end,
+      backgroundColor: event.backgroundColor,
+      ministerio: event.extendedProps.ministerio,
+      location: event.extendedProps.location,
+      mapLink: event.extendedProps.mapLink,
+      publicDescription: event.extendedProps.publicDescription,
+      privateNotes: event.extendedProps.privateNotes,
+      visibility: event.extendedProps.visibility
+    });
   };
 
   const closeModal = () => {
@@ -106,96 +117,7 @@ export default function CalendarioDistritalPage() {
 
       {/* Modal de Detalles del Evento */}
       {selectedEvent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={closeModal}>
-          <div
-            className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Header del Modal con el color del ministerio */}
-            <div
-              className="px-6 py-4 flex items-center justify-between text-white"
-              style={{ backgroundColor: selectedEvent.backgroundColor }}
-            >
-              <div>
-                <span className="text-xs font-semibold uppercase tracking-wider opacity-90">
-                  {selectedEvent.extendedProps.ministerio}
-                </span>
-                <h3 className="text-xl font-bold mt-1 line-clamp-2">{selectedEvent.title}</h3>
-              </div>
-            </div>
-
-            <div className="p-6 space-y-4">
-              {/* Fechas */}
-              <div className="flex items-start gap-3 text-gray-700">
-                <CalendarDays className="w-5 h-5 text-gray-400 mt-0.5 shrink-0" />
-                <div>
-                  <p className="font-medium text-sm">
-                    {format(selectedEvent.start, "EEEE d 'de' MMMM, yyyy - HH:mm", { locale: es })}
-                  </p>
-                  {selectedEvent.end && (
-                    <p className="text-sm text-gray-500">
-                      Hasta: {format(selectedEvent.end, "EEEE d 'de' MMMM, yyyy - HH:mm", { locale: es })}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              {/* Ubicación */}
-              {(selectedEvent.extendedProps.location || selectedEvent.extendedProps.mapLink) && (
-                <div className="flex items-start gap-3 text-gray-700">
-                  <MapPin className="w-5 h-5 text-gray-400 mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-sm">
-                      {selectedEvent.extendedProps.location || "Ubicación sin especificar"}
-                    </p>
-                    {selectedEvent.extendedProps.mapLink && (
-                      <a
-                        href={selectedEvent.extendedProps.mapLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs text-blue-600 hover:underline mt-1 inline-block"
-                      >
-                        Ver en Google Maps
-                      </a>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* Descripción Pública */}
-              {selectedEvent.extendedProps.publicDescription && (
-                <div className="flex items-start gap-3 text-gray-700">
-                  <AlignLeft className="w-5 h-5 text-gray-400 mt-0.5 shrink-0" />
-                  <div className="text-sm whitespace-pre-wrap max-h-32 overflow-y-auto custom-scrollbar pr-2">
-                    {selectedEvent.extendedProps.publicDescription}
-                  </div>
-                </div>
-              )}
-
-              {/* Notas Privadas (Solo visible porque está logueado en Dashboard) */}
-              {selectedEvent.extendedProps.privateNotes && (
-                <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                  <div className="flex items-center gap-2 text-amber-800 font-semibold mb-1">
-                    <Lock className="w-4 h-4" />
-                    <span className="text-xs uppercase tracking-wider">Notas Internas (Privadas)</span>
-                  </div>
-                  <div className="text-sm text-amber-900 whitespace-pre-wrap max-h-32 overflow-y-auto custom-scrollbar-amber pr-2">
-                    {selectedEvent.extendedProps.privateNotes}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end">
-              <button
-                onClick={closeModal}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-              >
-                Cerrar
-              </button>
-            </div>
-          </div>
-        </div>
+        <EventDetailModal event={selectedEvent} onClose={closeModal} />
       )}
     </div>
   );

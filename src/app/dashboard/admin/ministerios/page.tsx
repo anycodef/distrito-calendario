@@ -16,7 +16,7 @@ type Ministerio = {
 export default function MinisteriosAdminPage() {
   const [ministerios, setMinisterios] = useState<Ministerio[]>([]);
   const [categorias, setCategorias] = useState<{id: string, name: string}[]>([]);
-  const [usuarios, setUsuarios] = useState<{id: string, name: string, role: string}[]>([]);
+  const [usuarios, setUsuarios] = useState<{id: string, name: string, roles: string[]}[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Formularios
@@ -38,7 +38,7 @@ export default function MinisteriosAdminPage() {
 
     setMinisterios(await resMin.json());
     setCategorias(await resCat.json());
-    setUsuarios((await resUsr.json()).filter((u: any) => u.role !== "ADMIN")); // Solo líderes o supervisores
+    setUsuarios((await resUsr.json()).filter((u: any) => u.roles?.includes("LIDER"))); // Solo usuarios que tengan el rol de Líder
     setLoading(false);
   };
 
@@ -139,7 +139,7 @@ export default function MinisteriosAdminPage() {
               >
                 <option value="">-- Sin Líder Asignado --</option>
                 {usuarios.map(usr => (
-                  <option key={usr.id} value={usr.id}>{usr.name} ({usr.role})</option>
+                  <option key={usr.id} value={usr.id}>{usr.name}</option>
                 ))}
               </select>
             </div>

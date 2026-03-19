@@ -333,11 +333,17 @@ export default function NuevoEventoPage() {
               <textarea
                 id="publicDescription"
                 name="publicDescription"
-                rows={3}
+                rows={4}
+                maxLength={800}
                 value={formData.publicDescription}
                 onChange={handleChange}
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
               />
+              <div className="mt-1 flex justify-end">
+                <span className={`text-xs ${formData.publicDescription.length >= 800 ? 'text-red-500 font-medium' : 'text-gray-400'}`}>
+                  {formData.publicDescription.length} / 800 caracteres
+                </span>
+              </div>
             </div>
 
             <div className="col-span-full">
@@ -348,12 +354,18 @@ export default function NuevoEventoPage() {
               <textarea
                 id="privateNotes"
                 name="privateNotes"
-                rows={2}
+                rows={3}
+                maxLength={800}
                 value={formData.privateNotes}
                 onChange={handleChange}
                 className="block w-full rounded-md border-0 py-1.5 bg-amber-50 text-amber-900 shadow-sm ring-1 ring-inset ring-amber-300 placeholder:text-amber-400 focus:ring-2 focus:ring-inset focus:ring-amber-600 sm:text-sm sm:leading-6"
                 placeholder="Detalles logísticos, presupuestos, etc."
               />
+              <div className="mt-1 flex justify-end">
+                <span className={`text-xs ${formData.privateNotes.length >= 800 ? 'text-red-500 font-medium' : 'text-amber-500/80'}`}>
+                  {formData.privateNotes.length} / 800 caracteres
+                </span>
+              </div>
             </div>
           </div>
 

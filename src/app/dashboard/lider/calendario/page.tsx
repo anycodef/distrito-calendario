@@ -166,7 +166,7 @@ export default function CalendarioDistritalPage() {
               {selectedEvent.extendedProps.publicDescription && (
                 <div className="flex items-start gap-3 text-gray-700">
                   <AlignLeft className="w-5 h-5 text-gray-400 mt-0.5 shrink-0" />
-                  <div className="text-sm whitespace-pre-wrap">
+                  <div className="text-sm whitespace-pre-wrap max-h-32 overflow-y-auto custom-scrollbar pr-2">
                     {selectedEvent.extendedProps.publicDescription}
                   </div>
                 </div>
@@ -179,9 +179,9 @@ export default function CalendarioDistritalPage() {
                     <Lock className="w-4 h-4" />
                     <span className="text-xs uppercase tracking-wider">Notas Internas (Privadas)</span>
                   </div>
-                  <p className="text-sm text-amber-900 whitespace-pre-wrap">
+                  <div className="text-sm text-amber-900 whitespace-pre-wrap max-h-32 overflow-y-auto custom-scrollbar-amber pr-2">
                     {selectedEvent.extendedProps.privateNotes}
-                  </p>
+                  </div>
                 </div>
               )}
             </div>

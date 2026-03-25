@@ -12,9 +12,21 @@ export async function PUT(req: NextRequest, context: { params: Promise<{ id: str
   if (!payload) return NextResponse.json({ message: "No autorizado" }, { status: 401 });
 
   try {
-    const { name, phone, roleLocal, iglesiaId, ministerioId, isActive } = await req.json();
+    let { name, phone, roleLocal, iglesiaId, ministerioId, isActive } = await req.json();
     const params = await context.params;
     const id = params.id;
+
+    if (iglesiaId === "sin-iglesia-id") {
+      let generalIglesia = await prisma.iglesia.findFirst({
+        where: { name: { contains: "General" } }
+      });
+      if (!generalIglesia) {
+        generalIglesia = await prisma.iglesia.create({
+          data: { name: "Sede General / Distrito" }
+        });
+      }
+      iglesiaId = generalIglesia.id;
+    }
 
     const url = new URL(req.url);
     const reqContext = url.searchParams.get("context");

@@ -47,10 +47,22 @@ export async function POST(req: NextRequest) {
   if (!payload) return NextResponse.json({ message: "No autorizado" }, { status: 401 });
 
   try {
-    const { name, phone, roleLocal, iglesiaId, ministerioId } = await req.json();
+    let { name, phone, roleLocal, iglesiaId, ministerioId } = await req.json();
 
     if (!name || !roleLocal || !iglesiaId || !ministerioId) {
       return NextResponse.json({ message: "Campos requeridos faltantes" }, { status: 400 });
+    }
+
+    if (iglesiaId === "sin-iglesia-id") {
+      let generalIglesia = await prisma.iglesia.findFirst({
+        where: { name: { contains: "General" } }
+      });
+      if (!generalIglesia) {
+        generalIglesia = await prisma.iglesia.create({
+          data: { name: "Sede General / Distrito" }
+        });
+      }
+      iglesiaId = generalIglesia.id;
     }
 
     const url = new URL(req.url);

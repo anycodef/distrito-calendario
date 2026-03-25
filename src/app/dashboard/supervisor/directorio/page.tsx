@@ -218,12 +218,19 @@ export default function DirectorioLocalPage() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Ministerio Distrital</label>
-              <select
-                required value={ministerioId} onChange={e => setMinisterioId(e.target.value)}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 sm:text-sm text-black"
-              >
-                {ministerios.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
-              </select>
+              {ministerios.length === 1 ? (
+                <div className="mt-1 flex items-center gap-2 px-3 py-2 bg-blue-50 border border-blue-200 rounded-md text-sm font-medium text-blue-800">
+                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: ministerios[0].color || '#1e40af' }}></div>
+                  {ministerios[0].name}
+                </div>
+              ) : (
+                <select
+                  required value={ministerioId} onChange={e => setMinisterioId(e.target.value)}
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 sm:text-sm text-black"
+                >
+                  {ministerios.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
+                </select>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Iglesia Local</label>
@@ -231,6 +238,7 @@ export default function DirectorioLocalPage() {
                 required value={iglesiaId} onChange={e => setIglesiaId(e.target.value)}
                 className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 sm:text-sm text-black"
               >
+                <option value="sin-iglesia-id">-- Sin iglesia local / Sede distrital --</option>
                 {iglesias.map(i => <option key={i.id} value={i.id}>{i.name}</option>)}
               </select>
             </div>

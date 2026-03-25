@@ -102,6 +102,14 @@ export default function CalendarioDistritalPage() {
             locale={esLocale}
             events={eventos}
             eventClick={handleEventClick}
+            eventContent={(arg) => {
+              return (
+                <div title={arg.event.title} className="w-full overflow-hidden text-ellipsis whitespace-nowrap p-0.5 cursor-pointer">
+                  {arg.timeText && <span className="font-semibold text-xs opacity-90 mr-1">{arg.timeText}</span>}
+                  <span className="font-medium text-xs sm:text-sm">{arg.event.title}</span>
+                </div>
+              );
+            }}
             height="auto"
             contentHeight={600}
             eventTimeFormat={{

@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
     const sessionCookie = request.cookies.get("session")?.value;
     if (!sessionCookie) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
     const payload = await decrypt(sessionCookie);
-    if (!payload || (!(payload as any).roles.includes("LIDER") && !(payload as any).roles.includes("SUPERVISOR"))) {
+    if (!payload || (!(payload as any).roles.includes("LIDER") && !(payload as any).roles.includes("SUPERVISOR") && !(payload as any).roles.includes("ADMIN"))) {
       return NextResponse.json({ error: "No autorizado" }, { status: 401 });
     }
 

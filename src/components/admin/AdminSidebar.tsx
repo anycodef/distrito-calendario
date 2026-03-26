@@ -8,7 +8,8 @@ import {
   Users,
   Building2,
   FolderTree,
-  BookMarked
+  BookMarked,
+  CalendarDays
 } from "lucide-react";
 
 export default function AdminSidebar() {
@@ -22,7 +23,8 @@ export default function AdminSidebar() {
   };
 
   const navItems = [
-    { name: "Dashboard", href: "/dashboard/admin", icon: LayoutDashboard },
+    { name: "Inicio / Panel", href: "/dashboard/admin", icon: LayoutDashboard },
+    { name: "Calendario Distrital", href: "/dashboard/admin/calendario", icon: CalendarDays },
     { name: "Usuarios y Credenciales", href: "/dashboard/admin/usuarios", icon: Users },
     { name: "Ministerios", href: "/dashboard/admin/ministerios", icon: BookMarked },
     { name: "Categorías", href: "/dashboard/admin/categorias", icon: FolderTree },

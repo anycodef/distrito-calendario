@@ -72,6 +72,16 @@ export default function AdminDashboardPage() {
           </dd>
         </div>
       </div>
+
+      <div className="mt-8 bg-blue-50 border border-blue-100 rounded-lg p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div>
+          <h4 className="text-lg font-bold text-blue-900">Calendario del Distrito 3</h4>
+          <p className="text-sm text-blue-700 mt-1">Explora todos los eventos públicos y privados programados por los ministerios en el calendario general.</p>
+        </div>
+        <a href="/dashboard/admin/calendario" className="px-5 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-md hover:bg-blue-700 transition-colors shrink-0 shadow-sm">
+          Ir al Calendario
+        </a>
+      </div>
     </div>
   );
 }

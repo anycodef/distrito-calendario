@@ -101,11 +101,12 @@ export default function CalendarioDistritalPage() {
             }}
             locale={esLocale}
             events={eventos}
+            eventDisplay="block"
             eventClick={handleEventClick}
             eventContent={(arg) => {
               return (
-                <div title={arg.event.title} className="w-full overflow-hidden text-ellipsis whitespace-nowrap p-0.5 cursor-pointer">
-                  {arg.timeText && <span className="font-semibold text-xs opacity-90 mr-1">{arg.timeText}</span>}
+                <div title={arg.event.title} className="w-full overflow-hidden text-ellipsis whitespace-nowrap px-1.5 py-0.5 cursor-pointer flex items-center">
+                  {arg.timeText && <span className="font-semibold text-[10px] opacity-90 mr-1.5">{arg.timeText}</span>}
                   <span className="font-medium text-xs sm:text-sm">{arg.event.title}</span>
                 </div>
               );
